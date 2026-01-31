@@ -1055,6 +1055,20 @@
         .skeleton-avatar { width: 40px; height: 40px; border-radius: 8px; }
         .skeleton-text { height: 14px; flex: 1; }
         .skeleton-text.short { width: 80px; flex: none; }
+        /* Form Styles */
+        .form-group { margin-bottom: 1rem; }
+        .form-label { display: block; font-size: 0.8rem; font-weight: 500; color: var(--text-muted); margin-bottom: 0.4rem; text-transform: uppercase; letter-spacing: 0.05em; }
+        .form-input, .form-select, .form-textarea { width: 100%; padding: 0.6rem 0.875rem; background: var(--bg-input); border: 1px solid var(--border); border-radius: 8px; color: var(--text-primary); font-size: 0.875rem; transition: border-color 0.2s; }
+        .form-input:focus, .form-select:focus, .form-textarea:focus { outline: none; border-color: var(--accent); }
+        .form-textarea { min-height: 80px; resize: vertical; font-family: inherit; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+        .form-actions { display: flex; gap: 0.75rem; justify-content: flex-end; margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border); }
+        .btn-danger { background: var(--danger); color: white; }
+        .btn-danger:hover { background: #dc2626; }
+        .settings-token { font-family: monospace; font-size: 0.8rem; }
+        .token-status { display: flex; align-items: center; gap: 0.5rem; margin-top: 0.5rem; font-size: 0.8rem; }
+        .token-status.connected { color: var(--success); }
+        .token-status.disconnected { color: var(--text-muted); }
     </style>
 </head>
 <body>
@@ -1076,7 +1090,8 @@
                 <span class="search-icon">🔍</span>
                 <input type="text" placeholder="Search stocks... (Press /)" id="search-input">
             </div>
-            <div class="avatar">DM</div>
+            <button class="btn btn-secondary" onclick="showSettings()" style="padding:0.4rem 0.75rem">⚙️</button>
+            <div class="avatar" onclick="showSettings()" style="cursor:pointer">DM</div>
         </div>
     </nav>
 
@@ -1189,6 +1204,7 @@
                     <div class="section-header">
                         <h2 class="section-title">Portfolio Overview</h2>
                         <div class="section-actions">
+                            <button class="btn btn-primary" onclick="showAddStock()">➕ Add Stock</button>
                             <button class="btn btn-secondary" onclick="exportToCSV()">📥 Export</button>
                         </div>
                     </div>
@@ -1256,6 +1272,39 @@
             <div class="modal-body" id="modal-body">
                 <!-- Modal content will be rendered here -->
             </div>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div class="modal-overlay" id="settings-modal">
+        <div class="stock-detail-modal" style="max-width:500px">
+            <div class="modal-header">
+                <div class="modal-stock-info"><h2>⚙️ Settings</h2></div>
+                <button class="modal-close" onclick="closeSettings()">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">GitHub Personal Access Token</label>
+                    <input type="password" class="form-input settings-token" id="github-token" placeholder="ghp_xxxxxxxxxxxx">
+                    <div class="token-status" id="token-status"><span>⚪</span> Not configured</div>
+                    <p style="font-size:0.75rem;color:var(--text-muted);margin-top:0.5rem">Required for editing. Generate at GitHub Settings → Developer Settings → Personal Access Tokens (scopes: repo)</p>
+                </div>
+                <div class="form-actions">
+                    <button class="btn btn-secondary" onclick="closeSettings()">Cancel</button>
+                    <button class="btn btn-primary" onclick="saveSettings()">Save Token</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Stock Modal -->
+    <div class="modal-overlay" id="add-stock-modal">
+        <div class="stock-detail-modal" style="max-width:600px">
+            <div class="modal-header">
+                <div class="modal-stock-info"><h2>➕ Add New Stock</h2></div>
+                <button class="modal-close" onclick="closeAddStock()">×</button>
+            </div>
+            <div class="modal-body" id="add-stock-form"></div>
         </div>
     </div>
 
@@ -1848,6 +1897,202 @@
 
         // Auto refresh
         setInterval(loadData, 120000);
+        // Settings functions
+        function showSettings() {
+            const token = localStorage.getItem('github_token') || '';
+            document.getElementById('github-token').value = token;
+            updateTokenStatus();
+            document.getElementById('settings-modal').classList.add('active');
+        }
+
+        function closeSettings() {
+            document.getElementById('settings-modal').classList.remove('active');
+        }
+
+        function saveSettings() {
+            const token = document.getElementById('github-token').value.trim();
+            if (token) {
+                localStorage.setItem('github_token', token);
+                updateTokenStatus();
+                closeSettings();
+                alert('Token saved! You can now edit stocks.');
+            }
+        }
+
+        function updateTokenStatus() {
+            const token = localStorage.getItem('github_token');
+            const status = document.getElementById('token-status');
+            if (token) {
+                status.innerHTML = '<span>🟢</span> Connected';
+                status.className = 'token-status connected';
+            } else {
+                status.innerHTML = '<span>⚪</span> Not configured';
+                status.className = 'token-status disconnected';
+            }
+        }
+
+        function getAuthHeaders() {
+            const token = localStorage.getItem('github_token');
+            if (!token) return null;
+            return {
+                'Authorization': `token ${token}`,
+                'Accept': 'application/vnd.github.v3+json',
+                'Content-Type': 'application/json'
+            };
+        }
+
+        // Add Stock functions
+        function showEditStock(ticker) {
+            const stock = allStocks.find(s => s.ticker === ticker);
+            if (!stock) return;
+            document.getElementById("modal-body").innerHTML = renderStockForm(stock);
+        }
+
+        function showAddStock() {
+            document.getElementById('add-stock-form').innerHTML = renderStockForm();
+            document.getElementById('add-stock-modal').classList.add('active');
+        }
+
+        function closeAddStock() {
+            document.getElementById('add-stock-modal').classList.remove('active');
+        }
+
+        function renderStockForm(stock = null) {
+            const isEdit = !!stock;
+            return `
+                <div class="form-row">
+                    <div class="form-group"><label class="form-label">Ticker</label><input type="text" class="form-input" id="form-ticker" value="${stock?.ticker || ''}" ${isEdit ? 'readonly' : ''}></div>
+                    <div class="form-group"><label class="form-label">Company Name</label><input type="text" class="form-input" id="form-company" value="${stock?.name || ''}"></div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group"><label class="form-label">Sector</label><select class="form-select" id="form-sector">
+                        <option value="">Select...</option>
+                        <option value="semis" ${stock?.sector === 'semis' ? 'selected' : ''}>Semiconductors</option>
+                        <option value="software" ${stock?.sector === 'software' ? 'selected' : ''}>Software</option>
+                        <option value="internet" ${stock?.sector === 'internet' ? 'selected' : ''}>Internet</option>
+                    </select></div>
+                    <div class="form-group"><label class="form-label">Priority</label><select class="form-select" id="form-priority">
+                        <option value="medium" ${stock?.priority === 'medium' ? 'selected' : ''}>Medium</option>
+                        <option value="high" ${stock?.priority === 'high' ? 'selected' : ''}>High</option>
+                        <option value="low" ${stock?.priority === 'low' ? 'selected' : ''}>Low</option>
+                    </select></div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group"><label class="form-label">Conviction</label><select class="form-select" id="form-conviction">
+                        <option value="medium" ${stock?.conviction === 'medium' ? 'selected' : ''}>Medium</option>
+                        <option value="high" ${stock?.conviction === 'high' ? 'selected' : ''}>High</option>
+                        <option value="low" ${stock?.conviction === 'low' ? 'selected' : ''}>Low</option>
+                    </select></div>
+                    <div class="form-group"><label class="form-label">Price Target ($)</label><input type="number" class="form-input" id="form-target" value="${stock?.priceTarget || ''}"></div>
+                </div>
+                <div class="form-group"><label class="form-label">Analyst</label><input type="text" class="form-input" id="form-analyst" value="${stock?.analyst || ''}"></div>
+                <div class="form-group"><label class="form-label">Investment Thesis</label><textarea class="form-textarea" id="form-thesis">${stock?.thesis || ''}</textarea></div>
+                <div class="form-group"><label class="form-label">Bull Case (one per line)</label><textarea class="form-textarea" id="form-bull">${stock?.bullCase?.join('\n') || ''}</textarea></div>
+                <div class="form-group"><label class="form-label">Bear Case (one per line)</label><textarea class="form-textarea" id="form-bear">${stock?.bearCase?.join('\n') || ''}</textarea></div>
+                <div class="form-group"><label class="form-label">Key Questions (one per line)</label><textarea class="form-textarea" id="form-questions">${stock?.keyQuestions?.join('\n') || ''}</textarea></div>
+                <div class="form-group"><label class="form-label"><input type="checkbox" id="form-model" ${stock?.modelCompleted ? 'checked' : ''}> Model Completed</label></div>
+                <div class="form-actions">
+                    ${isEdit ? '<button class="btn btn-danger" onclick="deleteStock(' + stock.issueNumber + ')">Delete</button>' : ''}
+                    <button class="btn btn-secondary" onclick="${isEdit ? 'closeModal()' : 'closeAddStock()'}">Cancel</button>
+                    <button class="btn btn-primary" onclick="${isEdit ? 'updateStock(' + stock.issueNumber + ')' : 'createStock()'}">Save</button>
+                </div>
+            `;
+        }
+
+        function generateIssueBody() {
+            const company = document.getElementById('form-company').value;
+            const analyst = document.getElementById('form-analyst').value;
+            const conviction = document.getElementById('form-conviction').value;
+            const target = document.getElementById('form-target').value;
+            const thesis = document.getElementById('form-thesis').value;
+            const bull = document.getElementById('form-bull').value.split('\n').filter(l => l.trim()).map(l => '- ' + l.trim()).join('\n');
+            const bear = document.getElementById('form-bear').value.split('\n').filter(l => l.trim()).map(l => '- ' + l.trim()).join('\n');
+            const questions = document.getElementById('form-questions').value.split('\n').filter(l => l.trim()).map(l => '- ' + l.trim()).join('\n');
+            const model = document.getElementById('form-model').checked;
+
+            let body = `Company: ${company}\n`;
+            if (analyst) body += `Analyst: ${analyst}\n`;
+            body += `Conviction: ${conviction}\n`;
+            if (target) body += `Price Target: $${target}\n`;
+            body += `\n- [${model ? 'x' : ' '}] Model Completed\n`;
+            if (thesis) body += `\n## Thesis\n${thesis}\n`;
+            if (bull) body += `\n## Bull Case\n${bull}\n`;
+            if (bear) body += `\n## Bear Case\n${bear}\n`;
+            if (questions) body += `\n## Key Questions\n${questions}\n`;
+            return body;
+        }
+
+        async function createStock() {
+            const headers = getAuthHeaders();
+            if (!headers) { alert('Please configure your GitHub token in Settings first.'); showSettings(); return; }
+            
+            const ticker = document.getElementById('form-ticker').value.toUpperCase().trim();
+            if (!ticker) { alert('Ticker is required'); return; }
+
+            const sector = document.getElementById('form-sector').value;
+            const priority = document.getElementById('form-priority').value;
+            const labels = ['stock'];
+            if (sector) labels.push('sector:' + sector);
+            if (priority) labels.push('priority:' + priority);
+            labels.push('status:active');
+
+            try {
+                const res = await fetch(API_BASE + '/issues', {
+                    method: 'POST',
+                    headers,
+                    body: JSON.stringify({ title: ticker, body: generateIssueBody(), labels })
+                });
+                if (!res.ok) throw new Error('Failed to create issue');
+                closeAddStock();
+                loadData();
+                alert('Stock added!');
+            } catch (e) { alert('Error: ' + e.message); }
+        }
+
+        async function updateStock(issueNumber) {
+            const headers = getAuthHeaders();
+            if (!headers) { alert('Please configure your GitHub token in Settings first.'); showSettings(); return; }
+            
+            const sector = document.getElementById('form-sector').value;
+            const priority = document.getElementById('form-priority').value;
+            const labels = ['stock'];
+            if (sector) labels.push('sector:' + sector);
+            if (priority) labels.push('priority:' + priority);
+            labels.push('status:active');
+
+            try {
+                const res = await fetch(API_BASE + '/issues/' + issueNumber, {
+                    method: 'PATCH',
+                    headers,
+                    body: JSON.stringify({ body: generateIssueBody(), labels })
+                });
+                if (!res.ok) throw new Error('Failed to update issue');
+                closeModal();
+                loadData();
+                alert('Stock updated!');
+            } catch (e) { alert('Error: ' + e.message); }
+        }
+
+        async function deleteStock(issueNumber) {
+            if (!confirm('Are you sure you want to delete this stock?')) return;
+            const headers = getAuthHeaders();
+            if (!headers) { alert('Please configure your GitHub token in Settings first.'); return; }
+            
+            try {
+                const res = await fetch(API_BASE + '/issues/' + issueNumber, {
+                    method: 'PATCH',
+                    headers,
+                    body: JSON.stringify({ state: 'closed' })
+                });
+                if (!res.ok) throw new Error('Failed to delete issue');
+                closeModal();
+                loadData();
+                alert('Stock deleted!');
+            } catch (e) { alert('Error: ' + e.message); }
+        }
+
+        // Initialize token status on load
+        setTimeout(updateTokenStatus, 100);
     </script>
 </body>
 </html>
