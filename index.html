@@ -1040,6 +1040,15 @@
         .tab-content.active {
             display: block;
         }
+        /* Tooltip styles */
+        [data-tooltip] { position: relative; }
+        [data-tooltip]::after { content: attr(data-tooltip); position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%) translateY(-4px); background: var(--bg-primary); color: var(--text-primary); padding: 0.4rem 0.75rem; border-radius: 6px; font-size: 0.75rem; white-space: nowrap; opacity: 0; pointer-events: none; transition: opacity 0.2s, transform 0.2s; border: 1px solid var(--border); z-index: 100; }
+        [data-tooltip]:hover::after { opacity: 1; transform: translateX(-50%) translateY(-8px); }
+        .summary-card { transition: transform 0.2s ease, box-shadow 0.2s ease; }
+        .summary-card:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3); }
+        .btn:active { transform: scale(0.97); }
+        .stock-detail-modal { transform: translateY(20px); transition: transform 0.3s ease; }
+        .modal-overlay.active .stock-detail-modal { transform: translateY(0); }
     </style>
 </head>
 <body>
