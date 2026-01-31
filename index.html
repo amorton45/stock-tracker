@@ -1312,6 +1312,8 @@
                 if (e.key === '/') { e.preventDefault(); document.getElementById('search-input').focus(); }
                 if (e.key === 'Escape') closeModal();
                 if (e.key === 'r') loadData();
+                if (e.key === '?') showShortcutsHelp();
+                if (e.key === 'e') exportToCSV();
             });
 
             // Modal close on overlay click
@@ -1814,6 +1816,15 @@
         }
 
         // Export
+        function showShortcutsHelp() {
+            const modal = document.createElement("div");
+            modal.className = "modal-overlay active";
+            modal.id = "shortcuts-modal";
+            modal.innerHTML = `<div class="stock-detail-modal" style="max-width:400px"><div class="modal-header"><div class="modal-stock-info"><h2>⌨️ Keyboard Shortcuts</h2></div><button class="modal-close" onclick="document.getElementById('shortcuts-modal').remove()">×</button></div><div class="modal-body"><div style="display:grid;gap:0.75rem"><div style="display:flex;justify-content:space-between;padding:0.5rem;background:var(--bg-secondary);border-radius:6px"><span style="color:var(--text-muted)">Search</span><kbd style="background:var(--bg-input);padding:0.25rem 0.5rem;border-radius:4px;font-family:monospace">/</kbd></div><div style="display:flex;justify-content:space-between;padding:0.5rem;background:var(--bg-secondary);border-radius:6px"><span style="color:var(--text-muted)">Refresh</span><kbd style="background:var(--bg-input);padding:0.25rem 0.5rem;border-radius:4px;font-family:monospace">R</kbd></div><div style="display:flex;justify-content:space-between;padding:0.5rem;background:var(--bg-secondary);border-radius:6px"><span style="color:var(--text-muted)">Close modal</span><kbd style="background:var(--bg-input);padding:0.25rem 0.5rem;border-radius:4px;font-family:monospace">Esc</kbd></div><div style="display:flex;justify-content:space-between;padding:0.5rem;background:var(--bg-secondary);border-radius:6px"><span style="color:var(--text-muted)">Export CSV</span><kbd style="background:var(--bg-input);padding:0.25rem 0.5rem;border-radius:4px;font-family:monospace">E</kbd></div><div style="display:flex;justify-content:space-between;padding:0.5rem;background:var(--bg-secondary);border-radius:6px"><span style="color:var(--text-muted)">Show help</span><kbd style="background:var(--bg-input);padding:0.25rem 0.5rem;border-radius:4px;font-family:monospace">?</kbd></div></div></div></div>`;
+            modal.onclick = (e) => { if (e.target === modal) modal.remove(); };
+            document.body.appendChild(modal);
+        }
+
         function exportToCSV() {
             const headers = ['Ticker', 'Company', 'Price', 'Target', 'Upside %', 'Conviction', 'Sector', 'Calls', 'Model Complete'];
             const rows = allStocks.map(s => {
