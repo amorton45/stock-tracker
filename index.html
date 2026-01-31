@@ -5,6 +5,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Stock Research Tracker</title>
     <style>
+        :root {
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --bg-tertiary: #334155;
+            --bg-hover: #475569;
+            --text-primary: #f8fafc;
+            --text-secondary: #e2e8f0;
+            --text-muted: #94a3b8;
+            --text-dim: #64748b;
+            --border: #334155;
+            --accent: #3b82f6;
+            --accent-hover: #2563eb;
+            --success: #22c55e;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --purple: #8b5cf6;
+            --cyan: #06b6d4;
+            --pink: #ec4899;
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -13,230 +33,827 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
-            background: #0f172a;
-            color: #e2e8f0;
+            background: var(--bg-primary);
+            color: var(--text-secondary);
             min-height: 100vh;
+        }
+
+        /* Layout */
+        .app-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 260px;
+            background: var(--bg-secondary);
+            border-right: 1px solid var(--border);
+            padding: 1.5rem;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .main-content {
+            flex: 1;
+            margin-left: 260px;
             padding: 2rem;
         }
 
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
+        /* Sidebar */
+        .logo {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
-        header {
+        .nav-section {
+            margin-bottom: 2rem;
+        }
+
+        .nav-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-dim);
+            margin-bottom: 0.75rem;
+            font-weight: 600;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.6rem 0.75rem;
+            border-radius: 8px;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.9rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .nav-item:hover {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        .nav-item.active {
+            background: var(--accent);
+            color: white;
+        }
+
+        .nav-item .count {
+            margin-left: auto;
+            background: var(--bg-tertiary);
+            padding: 0.15rem 0.5rem;
+            border-radius: 10px;
+            font-size: 0.75rem;
+        }
+
+        .nav-item.active .count {
+            background: rgba(255,255,255,0.2);
+        }
+
+        /* Header */
+        .page-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 2rem;
-            padding-bottom: 1rem;
-            border-bottom: 1px solid #334155;
+            margin-bottom: 1.5rem;
         }
 
-        h1 {
-            font-size: 1.75rem;
+        .page-title {
+            font-size: 1.5rem;
             font-weight: 600;
-            color: #f8fafc;
+            color: var(--text-primary);
         }
 
         .header-actions {
             display: flex;
-            gap: 1rem;
+            gap: 0.75rem;
             align-items: center;
         }
 
-        .refresh-btn {
-            background: #334155;
-            color: white;
+        .search-box {
+            display: flex;
+            align-items: center;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 0.5rem 1rem;
+            gap: 0.5rem;
+        }
+
+        .search-box input {
+            background: transparent;
             border: none;
-            padding: 0.6rem 1rem;
+            color: var(--text-secondary);
+            outline: none;
+            width: 200px;
+            font-size: 0.9rem;
+        }
+
+        .search-box input::placeholder {
+            color: var(--text-dim);
+        }
+
+        .btn {
+            padding: 0.6rem 1.25rem;
             border-radius: 8px;
-            font-size: 0.85rem;
+            font-size: 0.9rem;
+            font-weight: 500;
             cursor: pointer;
-            transition: background 0.2s;
+            border: none;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
-        .refresh-btn:hover {
-            background: #475569;
+        .btn-primary {
+            background: var(--accent);
+            color: white;
         }
 
-        .randy-note {
-            background: #1e3a5f;
-            border: 1px solid #3b82f6;
-            border-radius: 8px;
-            padding: 0.75rem 1rem;
-            font-size: 0.85rem;
-            color: #93c5fd;
+        .btn-primary:hover {
+            background: var(--accent-hover);
         }
 
+        .btn-secondary {
+            background: var(--bg-tertiary);
+            color: var(--text-secondary);
+        }
+
+        .btn-secondary:hover {
+            background: var(--bg-hover);
+        }
+
+        .btn-icon {
+            padding: 0.5rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+        }
+
+        /* Stats Bar */
         .stats-bar {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
+            grid-template-columns: repeat(5, 1fr);
             gap: 1rem;
-            margin-bottom: 2rem;
+            margin-bottom: 1.5rem;
         }
 
         .stat-card {
-            background: #1e293b;
+            background: var(--bg-secondary);
             padding: 1.25rem;
             border-radius: 12px;
-            border: 1px solid #334155;
+            border: 1px solid var(--border);
         }
 
         .stat-label {
-            font-size: 0.8rem;
-            color: #94a3b8;
+            font-size: 0.75rem;
+            color: var(--text-dim);
             margin-bottom: 0.5rem;
             text-transform: uppercase;
             letter-spacing: 0.05em;
         }
 
         .stat-value {
-            font-size: 2rem;
+            font-size: 1.75rem;
             font-weight: 700;
-            color: #f8fafc;
+            color: var(--text-primary);
         }
 
+        .stat-value.positive { color: var(--success); }
+        .stat-value.warning { color: var(--warning); }
+
+        /* View Toggle */
+        .view-toggle {
+            display: flex;
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            padding: 0.25rem;
+            border: 1px solid var(--border);
+        }
+
+        .view-toggle button {
+            padding: 0.4rem 0.75rem;
+            border: none;
+            background: transparent;
+            color: var(--text-muted);
+            cursor: pointer;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+        }
+
+        .view-toggle button.active {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        /* Cards View */
         .stocks-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
-            gap: 1.5rem;
+            grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+            gap: 1.25rem;
         }
 
         .stock-card {
-            background: #1e293b;
+            background: var(--bg-secondary);
             border-radius: 16px;
-            padding: 1.5rem;
-            border: 1px solid #334155;
+            border: 1px solid var(--border);
+            overflow: hidden;
+            transition: border-color 0.2s;
         }
 
-        .stock-header {
+        .stock-card:hover {
+            border-color: var(--bg-hover);
+        }
+
+        .stock-card-header {
+            padding: 1.25rem;
+            border-bottom: 1px solid var(--border);
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
-            margin-bottom: 1.25rem;
         }
 
-        .stock-ticker {
+        .stock-info {
+            display: flex;
+            gap: 1rem;
+            align-items: flex-start;
+        }
+
+        .stock-ticker-large {
             font-size: 1.5rem;
             font-weight: 700;
-            color: #f8fafc;
+            color: var(--text-primary);
         }
 
         .stock-name {
             font-size: 0.85rem;
-            color: #94a3b8;
+            color: var(--text-muted);
             margin-top: 0.25rem;
         }
 
-        .stock-link {
-            font-size: 0.75rem;
-            color: #64748b;
-            text-decoration: none;
+        .stock-price {
+            text-align: right;
         }
 
-        .stock-link:hover {
-            color: #3b82f6;
+        .stock-price-value {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-primary);
         }
 
-        .model-status {
+        .stock-price-change {
+            font-size: 0.8rem;
+            margin-top: 0.25rem;
+        }
+
+        .stock-price-change.positive { color: var(--success); }
+        .stock-price-change.negative { color: var(--danger); }
+
+        .stock-card-body {
+            padding: 1.25rem;
+        }
+
+        .stock-meta {
             display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            padding: 0.75rem 1rem;
-            background: #0f172a;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .tag {
+            padding: 0.25rem 0.6rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .tag-sector {
+            background: rgba(139, 92, 246, 0.15);
+            color: var(--purple);
+        }
+
+        .tag-priority-high {
+            background: rgba(239, 68, 68, 0.15);
+            color: var(--danger);
+        }
+
+        .tag-priority-medium {
+            background: rgba(245, 158, 11, 0.15);
+            color: var(--warning);
+        }
+
+        .tag-priority-low {
+            background: rgba(107, 114, 128, 0.15);
+            color: var(--text-muted);
+        }
+
+        .tag-analyst {
+            background: rgba(6, 182, 212, 0.15);
+            color: var(--cyan);
+        }
+
+        .stock-thesis {
+            background: var(--bg-primary);
             border-radius: 8px;
-            margin-bottom: 1.25rem;
+            padding: 0.75rem 1rem;
+            margin-bottom: 1rem;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            line-height: 1.5;
         }
 
-        .model-status.completed {
-            background: rgba(34, 197, 94, 0.1);
-            border: 1px solid rgba(34, 197, 94, 0.3);
+        .stock-thesis strong {
+            color: var(--text-secondary);
+            font-weight: 500;
         }
 
-        .model-indicator {
+        .stock-metrics {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .metric {
+            background: var(--bg-primary);
+            padding: 0.75rem;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .metric-value {
             font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-primary);
         }
 
-        .model-text {
-            font-size: 0.9rem;
-            color: #cbd5e1;
+        .metric-label {
+            font-size: 0.7rem;
+            color: var(--text-dim);
+            margin-top: 0.25rem;
+            text-transform: uppercase;
         }
 
-        .model-status.completed .model-text {
-            color: #22c55e;
+        .stock-progress {
+            margin-bottom: 1rem;
         }
 
-        .calls-section {
-            margin-top: 1rem;
-        }
-
-        .calls-header {
+        .progress-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 0.75rem;
+            margin-bottom: 0.5rem;
         }
 
-        .calls-title {
+        .progress-label {
             font-size: 0.8rem;
-            font-weight: 600;
-            color: #94a3b8;
+            color: var(--text-muted);
+        }
+
+        .progress-value {
+            font-size: 0.8rem;
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        .progress-bar {
+            height: 6px;
+            background: var(--bg-primary);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--accent);
+            border-radius: 3px;
+            transition: width 0.3s;
+        }
+
+        .progress-fill.complete {
+            background: var(--success);
+        }
+
+        .calls-summary {
+            display: flex;
+            gap: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .call-stat {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .call-stat-icon {
+            font-size: 1rem;
+        }
+
+        .call-stat-value {
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        /* Table View */
+        .table-container {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            overflow: hidden;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .data-table th {
+            background: var(--bg-tertiary);
+            padding: 0.875rem 1rem;
+            text-align: left;
+            font-size: 0.75rem;
             text-transform: uppercase;
             letter-spacing: 0.05em;
+            color: var(--text-muted);
+            font-weight: 600;
+            cursor: pointer;
+            user-select: none;
         }
 
-        .calls-count {
-            background: #334155;
-            padding: 0.2rem 0.6rem;
+        .data-table th:hover {
+            background: var(--bg-hover);
+        }
+
+        .data-table th .sort-icon {
+            margin-left: 0.5rem;
+            opacity: 0.5;
+        }
+
+        .data-table td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.9rem;
+        }
+
+        .data-table tr:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .table-ticker {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .table-company {
+            color: var(--text-muted);
+            font-size: 0.8rem;
+        }
+
+        .conviction-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .conviction-high {
+            background: rgba(34, 197, 94, 0.15);
+            color: var(--success);
+        }
+
+        .conviction-medium {
+            background: rgba(245, 158, 11, 0.15);
+            color: var(--warning);
+        }
+
+        .conviction-low {
+            background: rgba(107, 114, 128, 0.15);
+            color: var(--text-muted);
+        }
+
+        /* Activity Feed */
+        .activity-panel {
+            background: var(--bg-secondary);
             border-radius: 12px;
-            font-size: 0.75rem;
-            color: #cbd5e1;
+            border: 1px solid var(--border);
+            padding: 1.25rem;
+            margin-top: 1.5rem;
         }
 
-        .calls-list {
+        .activity-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .activity-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .activity-list {
             list-style: none;
         }
 
-        .call-item {
+        .activity-item {
+            display: flex;
+            gap: 0.75rem;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+
+        .activity-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            flex-shrink: 0;
+        }
+
+        .activity-icon.call {
+            background: rgba(34, 197, 94, 0.15);
+        }
+
+        .activity-icon.stock {
+            background: rgba(59, 130, 246, 0.15);
+        }
+
+        .activity-icon.model {
+            background: rgba(139, 92, 246, 0.15);
+        }
+
+        .activity-content {
+            flex: 1;
+        }
+
+        .activity-text {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .activity-text strong {
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        .activity-time {
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            margin-top: 0.25rem;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 100;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: var(--bg-secondary);
+            border-radius: 16px;
+            width: 100%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+            border: 1px solid var(--border);
+        }
+
+        .modal-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 0.5rem 0.75rem;
-            background: #0f172a;
-            border-radius: 6px;
-            margin-bottom: 0.5rem;
-            font-size: 0.85rem;
         }
 
-        .call-item .contact {
-            color: #e2e8f0;
+        .modal-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-primary);
         }
 
-        .call-item .date {
-            color: #64748b;
+        .modal-close {
+            background: none;
+            border: none;
+            color: var(--text-dim);
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.25rem;
+        }
+
+        .modal-close:hover {
+            color: var(--text-primary);
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+        }
+
+        .modal-footer {
+            padding: 1rem 1.5rem;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.75rem;
+        }
+
+        /* Stock Detail Modal */
+        .detail-section {
+            margin-bottom: 1.5rem;
+        }
+
+        .detail-section-title {
             font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-dim);
+            margin-bottom: 0.75rem;
+            font-weight: 600;
         }
 
-        .empty-calls {
-            color: #475569;
+        .detail-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+        }
+
+        .detail-field {
+            background: var(--bg-primary);
+            padding: 0.75rem;
+            border-radius: 8px;
+        }
+
+        .detail-field-label {
+            font-size: 0.7rem;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            margin-bottom: 0.25rem;
+        }
+
+        .detail-field-value {
+            font-size: 0.9rem;
+            color: var(--text-primary);
+        }
+
+        .thesis-box {
+            background: var(--bg-primary);
+            border-radius: 8px;
+            padding: 1rem;
+        }
+
+        .thesis-box h4 {
             font-size: 0.85rem;
-            font-style: italic;
-            padding: 0.5rem 0;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
         }
 
+        .thesis-box p {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+        .bull-bear-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+        }
+
+        .bull-box, .bear-box {
+            background: var(--bg-primary);
+            border-radius: 8px;
+            padding: 1rem;
+        }
+
+        .bull-box {
+            border-left: 3px solid var(--success);
+        }
+
+        .bear-box {
+            border-left: 3px solid var(--danger);
+        }
+
+        .bull-box h4, .bear-box h4 {
+            font-size: 0.8rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .bull-box h4 { color: var(--success); }
+        .bear-box h4 { color: var(--danger); }
+
+        .bull-box ul, .bear-box ul {
+            list-style: none;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .bull-box li, .bear-box li {
+            padding: 0.25rem 0;
+        }
+
+        .bull-box li::before {
+            content: "+ ";
+            color: var(--success);
+        }
+
+        .bear-box li::before {
+            content: "− ";
+            color: var(--danger);
+        }
+
+        .calls-detail-list {
+            list-style: none;
+        }
+
+        .call-detail-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            padding: 0.75rem;
+            background: var(--bg-primary);
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+        }
+
+        .call-detail-info {
+            flex: 1;
+        }
+
+        .call-detail-contact {
+            font-size: 0.9rem;
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        .call-detail-type {
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            margin-top: 0.25rem;
+        }
+
+        .call-detail-notes {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-top: 0.5rem;
+            line-height: 1.4;
+        }
+
+        .call-detail-date {
+            font-size: 0.8rem;
+            color: var(--text-dim);
+        }
+
+        /* Loading */
         .loading {
-            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
             padding: 4rem;
-            color: #64748b;
+            color: var(--text-dim);
         }
 
         .loading-spinner {
-            display: inline-block;
             width: 40px;
             height: 40px;
-            border: 3px solid #334155;
-            border-top-color: #3b82f6;
+            border: 3px solid var(--bg-tertiary);
+            border-top-color: var(--accent);
             border-radius: 50%;
             animation: spin 1s linear infinite;
             margin-bottom: 1rem;
@@ -248,23 +865,85 @@
 
         .empty-state {
             text-align: center;
-            padding: 4rem 2rem;
-            color: #64748b;
+            padding: 4rem;
+            color: var(--text-dim);
         }
 
         .empty-state h3 {
-            font-size: 1.25rem;
+            color: var(--text-muted);
             margin-bottom: 0.5rem;
-            color: #94a3b8;
         }
 
-        .error-state {
-            text-align: center;
-            padding: 2rem;
-            background: rgba(239, 68, 68, 0.1);
-            border: 1px solid rgba(239, 68, 68, 0.3);
+        /* Randy Note */
+        .randy-helper {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(139, 92, 246, 0.1));
+            border: 1px solid rgba(59, 130, 246, 0.3);
             border-radius: 12px;
-            color: #fca5a5;
+            padding: 1rem 1.25rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .randy-helper-icon {
+            font-size: 1.5rem;
+        }
+
+        .randy-helper-text {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .randy-helper-text strong {
+            color: var(--accent);
+        }
+
+        /* Filter Bar */
+        .filter-bar {
+            display: flex;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .filter-label {
+            font-size: 0.8rem;
+            color: var(--text-dim);
+        }
+
+        .filter-select {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 0.4rem 0.75rem;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            cursor: pointer;
+        }
+
+        .filter-select:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .sidebar {
+                display: none;
+            }
+            .main-content {
+                margin-left: 0;
+            }
+            .stats-bar {
+                grid-template-columns: repeat(3, 1fr);
+            }
         }
 
         @media (max-width: 768px) {
@@ -274,47 +953,163 @@
             .stocks-grid {
                 grid-template-columns: 1fr;
             }
-            header {
+            .page-header {
                 flex-direction: column;
                 gap: 1rem;
                 align-items: flex-start;
+            }
+            .header-actions {
+                width: 100%;
+                flex-wrap: wrap;
+            }
+            .search-box {
+                flex: 1;
+            }
+            .search-box input {
+                width: 100%;
             }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>📊 Stock Research Tracker</h1>
-            <div class="header-actions">
-                <div class="randy-note">💬 Tell Randy to add/update stocks</div>
-                <button class="refresh-btn" onclick="loadData()">↻ Refresh</button>
-            </div>
-        </header>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">📊 Research Tracker</div>
+            
+            <nav class="nav-section">
+                <div class="nav-label">Views</div>
+                <div class="nav-item active" data-view="all">
+                    <span>📋</span> All Stocks
+                    <span class="count" id="nav-count-all">0</span>
+                </div>
+                <div class="nav-item" data-view="active">
+                    <span>🔥</span> Active Research
+                    <span class="count" id="nav-count-active">0</span>
+                </div>
+                <div class="nav-item" data-view="monitoring">
+                    <span>👀</span> Monitoring
+                    <span class="count" id="nav-count-monitoring">0</span>
+                </div>
+            </nav>
 
-        <div class="stats-bar">
-            <div class="stat-card">
-                <div class="stat-label">Active Stocks</div>
-                <div class="stat-value" id="stat-stocks">-</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-label">Calls Completed</div>
-                <div class="stat-value" id="stat-completed">-</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-label">Calls Scheduled</div>
-                <div class="stat-value" id="stat-scheduled">-</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-label">Models Done</div>
-                <div class="stat-value" id="stat-models">-</div>
-            </div>
-        </div>
+            <nav class="nav-section">
+                <div class="nav-label">Sectors</div>
+                <div class="nav-item" data-sector="semis">
+                    <span>🔌</span> Semiconductors
+                    <span class="count" id="nav-count-semis">0</span>
+                </div>
+                <div class="nav-item" data-sector="software">
+                    <span>💻</span> Software
+                    <span class="count" id="nav-count-software">0</span>
+                </div>
+                <div class="nav-item" data-sector="internet">
+                    <span>🌐</span> Internet
+                    <span class="count" id="nav-count-internet">0</span>
+                </div>
+            </nav>
 
-        <div id="content">
-            <div class="loading">
-                <div class="loading-spinner"></div>
-                <div>Loading stocks...</div>
+            <nav class="nav-section">
+                <div class="nav-label">Priority</div>
+                <div class="nav-item" data-priority="high">
+                    <span>🔴</span> High Priority
+                    <span class="count" id="nav-count-high">0</span>
+                </div>
+                <div class="nav-item" data-priority="medium">
+                    <span>🟡</span> Medium Priority
+                    <span class="count" id="nav-count-medium">0</span>
+                </div>
+                <div class="nav-item" data-priority="low">
+                    <span>⚪</span> Low Priority
+                    <span class="count" id="nav-count-low">0</span>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="page-header">
+                <h1 class="page-title">Stock Research</h1>
+                <div class="header-actions">
+                    <div class="search-box">
+                        <span>🔍</span>
+                        <input type="text" placeholder="Search stocks..." id="search-input">
+                    </div>
+                    <div class="view-toggle">
+                        <button class="active" data-view-type="cards">Cards</button>
+                        <button data-view-type="table">Table</button>
+                    </div>
+                    <button class="btn btn-secondary" onclick="loadData()">↻ Refresh</button>
+                </div>
+            </div>
+
+            <div class="randy-helper">
+                <span class="randy-helper-icon">🤖</span>
+                <div class="randy-helper-text">
+                    <strong>Randy manages this tracker.</strong> Tell me to add stocks, log calls, update thesis, or mark models complete.
+                </div>
+            </div>
+
+            <div class="stats-bar">
+                <div class="stat-card">
+                    <div class="stat-label">Active Stocks</div>
+                    <div class="stat-value" id="stat-stocks">-</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Calls Completed</div>
+                    <div class="stat-value" id="stat-completed">-</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Calls Scheduled</div>
+                    <div class="stat-value" id="stat-scheduled">-</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Models Complete</div>
+                    <div class="stat-value" id="stat-models">-</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">High Conviction</div>
+                    <div class="stat-value" id="stat-conviction">-</div>
+                </div>
+            </div>
+
+            <div class="filter-bar" id="filter-bar">
+                <div class="filter-group">
+                    <span class="filter-label">Sort:</span>
+                    <select class="filter-select" id="sort-select">
+                        <option value="ticker">Ticker</option>
+                        <option value="priority">Priority</option>
+                        <option value="calls">Most Calls</option>
+                        <option value="updated">Recently Updated</option>
+                    </select>
+                </div>
+            </div>
+
+            <div id="content">
+                <div class="loading">
+                    <div class="loading-spinner"></div>
+                    <div>Loading research...</div>
+                </div>
+            </div>
+
+            <div class="activity-panel" id="activity-panel" style="display: none;">
+                <div class="activity-header">
+                    <h3 class="activity-title">Recent Activity</h3>
+                </div>
+                <ul class="activity-list" id="activity-list">
+                </ul>
+            </div>
+        </main>
+    </div>
+
+    <!-- Stock Detail Modal -->
+    <div class="modal-overlay" id="detail-modal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 class="modal-title" id="modal-stock-title">Stock Details</h2>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body" id="modal-stock-body">
             </div>
         </div>
     </div>
@@ -323,184 +1118,584 @@
         const REPO = 'amorton45/stock-tracker';
         const API_BASE = `https://api.github.com/repos/${REPO}`;
 
+        let allStocks = [];
+        let currentFilter = { view: 'all', sector: null, priority: null };
+        let currentViewType = 'cards';
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            loadData();
+            setupEventListeners();
+        });
+
+        function setupEventListeners() {
+            // Search
+            document.getElementById('search-input').addEventListener('input', (e) => {
+                renderStocks(filterStocks(allStocks, e.target.value));
+            });
+
+            // Sort
+            document.getElementById('sort-select').addEventListener('change', () => {
+                renderStocks(filterStocks(allStocks));
+            });
+
+            // View toggle
+            document.querySelectorAll('.view-toggle button').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.view-toggle button').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    currentViewType = btn.dataset.viewType;
+                    renderStocks(filterStocks(allStocks));
+                });
+            });
+
+            // Sidebar navigation
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.addEventListener('click', () => {
+                    document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+                    item.classList.add('active');
+                    
+                    if (item.dataset.view) currentFilter = { view: item.dataset.view, sector: null, priority: null };
+                    if (item.dataset.sector) currentFilter = { view: null, sector: item.dataset.sector, priority: null };
+                    if (item.dataset.priority) currentFilter = { view: null, sector: null, priority: item.dataset.priority };
+                    
+                    renderStocks(filterStocks(allStocks));
+                });
+            });
+
+            // Close modal on overlay click
+            document.getElementById('detail-modal').addEventListener('click', (e) => {
+                if (e.target.id === 'detail-modal') closeModal();
+            });
+        }
+
         async function loadData() {
             const content = document.getElementById('content');
-            content.innerHTML = `
-                <div class="loading">
-                    <div class="loading-spinner"></div>
-                    <div>Loading stocks...</div>
-                </div>
-            `;
+            content.innerHTML = `<div class="loading"><div class="loading-spinner"></div><div>Loading research...</div></div>`;
 
             try {
-                // Fetch all issues with 'stock' label
                 const issuesRes = await fetch(`${API_BASE}/issues?labels=stock&state=open&per_page=100`);
                 if (!issuesRes.ok) throw new Error('Failed to fetch issues');
                 const issues = await issuesRes.json();
 
                 if (issues.length === 0) {
-                    content.innerHTML = `
-                        <div class="empty-state">
-                            <h3>No stocks yet</h3>
-                            <p>Tell Randy to add a stock to start tracking.</p>
-                        </div>
-                    `;
-                    updateStats(0, 0, 0, 0);
+                    content.innerHTML = `<div class="empty-state"><h3>No stocks yet</h3><p>Tell Randy to add a stock to start tracking.</p></div>`;
+                    updateStats([]);
                     return;
                 }
 
-                // Fetch comments for each issue
-                const stocks = await Promise.all(issues.map(async (issue) => {
+                allStocks = await Promise.all(issues.map(async (issue) => {
                     const commentsRes = await fetch(issue.comments_url);
                     const comments = commentsRes.ok ? await commentsRes.json() : [];
                     return parseStock(issue, comments);
                 }));
 
-                renderStocks(stocks);
-                
-                // Update stats
-                const totalCompleted = stocks.reduce((sum, s) => sum + s.completedCalls.length, 0);
-                const totalScheduled = stocks.reduce((sum, s) => sum + s.scheduledCalls.length, 0);
-                const modelsComplete = stocks.filter(s => s.modelCompleted).length;
-                updateStats(stocks.length, totalCompleted, totalScheduled, modelsComplete);
+                // Fetch stock prices
+                await fetchStockPrices(allStocks);
+
+                updateStats(allStocks);
+                updateNavCounts(allStocks);
+                renderStocks(filterStocks(allStocks));
+                renderActivity(allStocks);
 
             } catch (error) {
                 console.error(error);
-                content.innerHTML = `
-                    <div class="error-state">
-                        <strong>Error loading data</strong><br>
-                        ${error.message}<br><br>
-                        <button class="refresh-btn" onclick="loadData()">Try Again</button>
-                    </div>
-                `;
+                content.innerHTML = `<div class="empty-state"><h3>Error loading data</h3><p>${error.message}</p><button class="btn btn-primary" onclick="loadData()">Retry</button></div>`;
             }
         }
 
         function parseStock(issue, comments) {
-            // Parse issue body for metadata
             const body = issue.body || '';
-            const lines = body.split('\n');
+            const labels = issue.labels.map(l => l.name);
             
-            let companyName = '';
-            let modelCompleted = false;
+            // Parse metadata from body
+            const parsed = {
+                ticker: issue.title.split(' ')[0].toUpperCase(),
+                name: '',
+                thesis: '',
+                bullCase: [],
+                bearCase: [],
+                modelCompleted: false,
+                conviction: 'medium',
+                priceTarget: null,
+                analyst: '',
+                sector: null,
+                priority: 'medium',
+                status: 'active',
+                completedCalls: [],
+                scheduledCalls: [],
+                issueNumber: issue.number,
+                issueUrl: issue.html_url,
+                updatedAt: issue.updated_at,
+                price: null,
+                priceChange: null
+            };
+
+            // Parse labels
+            labels.forEach(label => {
+                if (label.startsWith('sector:')) parsed.sector = label.replace('sector:', '');
+                if (label.startsWith('priority:')) parsed.priority = label.replace('priority:', '');
+                if (label.startsWith('status:')) parsed.status = label.replace('status:', '');
+            });
+
+            // Parse body
+            const lines = body.split('\n');
+            let currentSection = null;
 
             lines.forEach(line => {
-                if (line.startsWith('Company:')) {
-                    companyName = line.replace('Company:', '').trim();
+                const trimmed = line.trim();
+                
+                if (trimmed.startsWith('Company:')) parsed.name = trimmed.replace('Company:', '').trim();
+                if (trimmed.startsWith('Analyst:')) parsed.analyst = trimmed.replace('Analyst:', '').trim();
+                if (trimmed.startsWith('Price Target:')) parsed.priceTarget = trimmed.replace('Price Target:', '').trim();
+                if (trimmed.startsWith('Conviction:')) parsed.conviction = trimmed.replace('Conviction:', '').trim().toLowerCase();
+                if (trimmed.includes('[x] Model Completed') || trimmed.includes('Model: ✅') || trimmed.includes('Model: Complete')) {
+                    parsed.modelCompleted = true;
                 }
-                if (line.includes('[x] Model Completed') || line.includes('Model: ✅') || line.includes('Model: Complete')) {
-                    modelCompleted = true;
+                
+                if (trimmed.startsWith('## Thesis') || trimmed.startsWith('### Thesis')) {
+                    currentSection = 'thesis';
+                } else if (trimmed.startsWith('## Bull') || trimmed.startsWith('### Bull')) {
+                    currentSection = 'bull';
+                } else if (trimmed.startsWith('## Bear') || trimmed.startsWith('### Bear')) {
+                    currentSection = 'bear';
+                } else if (trimmed.startsWith('##') || trimmed.startsWith('###')) {
+                    currentSection = null;
+                } else if (currentSection === 'thesis' && trimmed) {
+                    parsed.thesis += (parsed.thesis ? ' ' : '') + trimmed;
+                } else if (currentSection === 'bull' && trimmed.startsWith('-')) {
+                    parsed.bullCase.push(trimmed.substring(1).trim());
+                } else if (currentSection === 'bear' && trimmed.startsWith('-')) {
+                    parsed.bearCase.push(trimmed.substring(1).trim());
                 }
             });
 
             // Parse comments for calls
-            const completedCalls = [];
-            const scheduledCalls = [];
-
             comments.forEach(comment => {
                 const text = comment.body || '';
-                const lines = text.split('\n');
+                const clines = text.split('\n');
                 
-                lines.forEach(line => {
-                    // Format: "COMPLETED: Contact Name | Date"
-                    // Format: "SCHEDULED: Contact Name | Date"
-                    const completedMatch = line.match(/^COMPLETED:\s*(.+?)\s*\|\s*(.+)$/i);
-                    const scheduledMatch = line.match(/^SCHEDULED:\s*(.+?)\s*\|\s*(.+)$/i);
+                clines.forEach(line => {
+                    const completedMatch = line.match(/^COMPLETED:\s*(.+?)\s*\|\s*(.+?)(?:\s*\|\s*(.+))?$/i);
+                    const scheduledMatch = line.match(/^SCHEDULED:\s*(.+?)\s*\|\s*(.+?)(?:\s*\|\s*(.+))?$/i);
                     
                     if (completedMatch) {
-                        completedCalls.push({ contact: completedMatch[1].trim(), date: completedMatch[2].trim() });
+                        parsed.completedCalls.push({
+                            contact: completedMatch[1].trim(),
+                            date: completedMatch[2].trim(),
+                            notes: completedMatch[3]?.trim() || ''
+                        });
                     }
                     if (scheduledMatch) {
-                        scheduledCalls.push({ contact: scheduledMatch[1].trim(), date: scheduledMatch[2].trim() });
+                        parsed.scheduledCalls.push({
+                            contact: scheduledMatch[1].trim(),
+                            date: scheduledMatch[2].trim(),
+                            notes: scheduledMatch[3]?.trim() || ''
+                        });
                     }
                 });
             });
 
-            return {
-                ticker: issue.title,
-                name: companyName,
-                modelCompleted,
-                completedCalls,
-                scheduledCalls,
-                issueNumber: issue.number,
-                issueUrl: issue.html_url
-            };
+            return parsed;
+        }
+
+        async function fetchStockPrices(stocks) {
+            // Using Yahoo Finance unofficial API (limited, but free)
+            // In production, you'd use a proper API
+            for (const stock of stocks) {
+                try {
+                    // Simple price fetch - in production use proper financial API
+                    const res = await fetch(`https://query1.finance.yahoo.com/v8/finance/chart/${stock.ticker}?interval=1d&range=1d`);
+                    if (res.ok) {
+                        const data = await res.json();
+                        const quote = data.chart?.result?.[0]?.meta;
+                        if (quote) {
+                            stock.price = quote.regularMarketPrice?.toFixed(2);
+                            const prevClose = quote.previousClose;
+                            if (prevClose) {
+                                const change = ((quote.regularMarketPrice - prevClose) / prevClose * 100).toFixed(2);
+                                stock.priceChange = parseFloat(change);
+                            }
+                        }
+                    }
+                } catch (e) {
+                    // Price fetch failed, continue without price
+                }
+            }
+        }
+
+        function filterStocks(stocks, searchTerm = '') {
+            let filtered = [...stocks];
+            
+            // Apply search
+            if (searchTerm) {
+                const term = searchTerm.toLowerCase();
+                filtered = filtered.filter(s => 
+                    s.ticker.toLowerCase().includes(term) || 
+                    s.name.toLowerCase().includes(term) ||
+                    s.thesis.toLowerCase().includes(term)
+                );
+            }
+
+            // Apply filters
+            if (currentFilter.view === 'active') {
+                filtered = filtered.filter(s => s.status === 'active');
+            } else if (currentFilter.view === 'monitoring') {
+                filtered = filtered.filter(s => s.status === 'monitoring');
+            }
+
+            if (currentFilter.sector) {
+                filtered = filtered.filter(s => s.sector === currentFilter.sector);
+            }
+
+            if (currentFilter.priority) {
+                filtered = filtered.filter(s => s.priority === currentFilter.priority);
+            }
+
+            // Apply sort
+            const sortBy = document.getElementById('sort-select').value;
+            filtered.sort((a, b) => {
+                switch (sortBy) {
+                    case 'priority':
+                        const priorityOrder = { high: 0, medium: 1, low: 2 };
+                        return priorityOrder[a.priority] - priorityOrder[b.priority];
+                    case 'calls':
+                        return (b.completedCalls.length + b.scheduledCalls.length) - 
+                               (a.completedCalls.length + a.scheduledCalls.length);
+                    case 'updated':
+                        return new Date(b.updatedAt) - new Date(a.updatedAt);
+                    default:
+                        return a.ticker.localeCompare(b.ticker);
+                }
+            });
+
+            return filtered;
         }
 
         function renderStocks(stocks) {
             const content = document.getElementById('content');
-            content.innerHTML = `
-                <div class="stocks-grid">
-                    ${stocks.map(stock => renderStockCard(stock)).join('')}
-                </div>
-            `;
+            
+            if (stocks.length === 0) {
+                content.innerHTML = `<div class="empty-state"><h3>No stocks match your filters</h3></div>`;
+                return;
+            }
+
+            if (currentViewType === 'table') {
+                content.innerHTML = renderTableView(stocks);
+            } else {
+                content.innerHTML = `<div class="stocks-grid">${stocks.map(s => renderStockCard(s)).join('')}</div>`;
+            }
         }
 
         function renderStockCard(stock) {
+            const totalCalls = stock.completedCalls.length + stock.scheduledCalls.length;
+            const checklistItems = 5; // Thesis, Bull case, Bear case, Calls, Model
+            const completedItems = [
+                stock.thesis ? 1 : 0,
+                stock.bullCase.length > 0 ? 1 : 0,
+                stock.bearCase.length > 0 ? 1 : 0,
+                stock.completedCalls.length > 0 ? 1 : 0,
+                stock.modelCompleted ? 1 : 0
+            ].reduce((a, b) => a + b, 0);
+            const progress = Math.round((completedItems / checklistItems) * 100);
+
             return `
-                <div class="stock-card">
-                    <div class="stock-header">
-                        <div>
-                            <div class="stock-ticker">${stock.ticker}</div>
-                            <div class="stock-name">${stock.name || ''}</div>
+                <div class="stock-card" onclick="openStockDetail(${stock.issueNumber})">
+                    <div class="stock-card-header">
+                        <div class="stock-info">
+                            <div>
+                                <div class="stock-ticker-large">${stock.ticker}</div>
+                                <div class="stock-name">${stock.name || 'Unknown'}</div>
+                            </div>
                         </div>
-                        <a href="${stock.issueUrl}" target="_blank" class="stock-link">#${stock.issueNumber}</a>
-                    </div>
-
-                    <div class="model-status ${stock.modelCompleted ? 'completed' : ''}">
-                        <span class="model-indicator">${stock.modelCompleted ? '✅' : '⬜'}</span>
-                        <span class="model-text">Model ${stock.modelCompleted ? 'Completed' : 'In Progress'}</span>
-                    </div>
-
-                    <div class="calls-section">
-                        <div class="calls-header">
-                            <span class="calls-title">✅ Calls Completed</span>
-                            <span class="calls-count">${stock.completedCalls.length}</span>
+                        <div class="stock-price">
+                            ${stock.price ? `
+                                <div class="stock-price-value">$${stock.price}</div>
+                                <div class="stock-price-change ${stock.priceChange >= 0 ? 'positive' : 'negative'}">
+                                    ${stock.priceChange >= 0 ? '▲' : '▼'} ${Math.abs(stock.priceChange)}%
+                                </div>
+                            ` : '<div class="stock-price-value">--</div>'}
                         </div>
-                        ${stock.completedCalls.length > 0 ? `
-                            <ul class="calls-list">
-                                ${stock.completedCalls.map(call => `
-                                    <li class="call-item">
-                                        <span class="contact">${call.contact}</span>
-                                        <span class="date">${call.date}</span>
-                                    </li>
-                                `).join('')}
-                            </ul>
-                        ` : '<div class="empty-calls">No completed calls yet</div>'}
                     </div>
-
-                    <div class="calls-section">
-                        <div class="calls-header">
-                            <span class="calls-title">📅 Calls Scheduled</span>
-                            <span class="calls-count">${stock.scheduledCalls.length}</span>
+                    <div class="stock-card-body">
+                        <div class="stock-meta">
+                            ${stock.sector ? `<span class="tag tag-sector">${stock.sector}</span>` : ''}
+                            <span class="tag tag-priority-${stock.priority}">${stock.priority}</span>
+                            ${stock.analyst ? `<span class="tag tag-analyst">${stock.analyst}</span>` : ''}
+                            ${stock.modelCompleted ? '<span class="tag" style="background: rgba(34,197,94,0.15); color: #22c55e;">✓ Model</span>' : ''}
                         </div>
-                        ${stock.scheduledCalls.length > 0 ? `
-                            <ul class="calls-list">
-                                ${stock.scheduledCalls.map(call => `
-                                    <li class="call-item">
-                                        <span class="contact">${call.contact}</span>
-                                        <span class="date">${call.date}</span>
-                                    </li>
-                                `).join('')}
-                            </ul>
-                        ` : '<div class="empty-calls">No scheduled calls</div>'}
+                        
+                        ${stock.thesis ? `
+                            <div class="stock-thesis">
+                                <strong>Thesis:</strong> ${stock.thesis.substring(0, 150)}${stock.thesis.length > 150 ? '...' : ''}
+                            </div>
+                        ` : ''}
+
+                        <div class="stock-metrics">
+                            <div class="metric">
+                                <div class="metric-value">${stock.completedCalls.length}</div>
+                                <div class="metric-label">Calls Done</div>
+                            </div>
+                            <div class="metric">
+                                <div class="metric-value">${stock.scheduledCalls.length}</div>
+                                <div class="metric-label">Scheduled</div>
+                            </div>
+                            <div class="metric">
+                                <div class="metric-value conviction-${stock.conviction}">${stock.conviction.charAt(0).toUpperCase()}</div>
+                                <div class="metric-label">Conviction</div>
+                            </div>
+                        </div>
+
+                        <div class="stock-progress">
+                            <div class="progress-header">
+                                <span class="progress-label">Research Progress</span>
+                                <span class="progress-value">${progress}%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill ${progress === 100 ? 'complete' : ''}" style="width: ${progress}%"></div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             `;
         }
 
-        function updateStats(stocks, completed, scheduled, models) {
-            document.getElementById('stat-stocks').textContent = stocks;
-            document.getElementById('stat-completed').textContent = completed;
-            document.getElementById('stat-scheduled').textContent = scheduled;
-            document.getElementById('stat-models').textContent = models;
+        function renderTableView(stocks) {
+            return `
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Ticker</th>
+                                <th>Price</th>
+                                <th>Sector</th>
+                                <th>Priority</th>
+                                <th>Conviction</th>
+                                <th>Calls</th>
+                                <th>Model</th>
+                                <th>Analyst</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${stocks.map(s => `
+                                <tr onclick="openStockDetail(${s.issueNumber})" style="cursor: pointer;">
+                                    <td>
+                                        <div class="table-ticker">${s.ticker}</div>
+                                        <div class="table-company">${s.name || '-'}</div>
+                                    </td>
+                                    <td>
+                                        ${s.price ? `
+                                            <div>$${s.price}</div>
+                                            <div class="stock-price-change ${s.priceChange >= 0 ? 'positive' : 'negative'}">
+                                                ${s.priceChange >= 0 ? '▲' : '▼'} ${Math.abs(s.priceChange)}%
+                                            </div>
+                                        ` : '--'}
+                                    </td>
+                                    <td><span class="tag tag-sector">${s.sector || '-'}</span></td>
+                                    <td><span class="tag tag-priority-${s.priority}">${s.priority}</span></td>
+                                    <td><span class="conviction-badge conviction-${s.conviction}">${s.conviction}</span></td>
+                                    <td>${s.completedCalls.length} / ${s.scheduledCalls.length}</td>
+                                    <td>${s.modelCompleted ? '✅' : '⬜'}</td>
+                                    <td>${s.analyst || '-'}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
         }
 
-        // Load data on page load
-        loadData();
+        function renderActivity(stocks) {
+            const activities = [];
+            
+            stocks.forEach(stock => {
+                stock.completedCalls.forEach(call => {
+                    activities.push({
+                        type: 'call',
+                        icon: '📞',
+                        text: `Call completed with <strong>${call.contact}</strong> for <strong>${stock.ticker}</strong>`,
+                        date: call.date
+                    });
+                });
+                
+                stock.scheduledCalls.forEach(call => {
+                    activities.push({
+                        type: 'scheduled',
+                        icon: '📅',
+                        text: `Call scheduled with <strong>${call.contact}</strong> for <strong>${stock.ticker}</strong>`,
+                        date: call.date
+                    });
+                });
+            });
 
-        // Auto-refresh every 30 seconds
-        setInterval(loadData, 30000);
+            // Sort by date (most recent first)
+            activities.sort((a, b) => new Date(b.date) - new Date(a.date));
+            
+            const panel = document.getElementById('activity-panel');
+            const list = document.getElementById('activity-list');
+            
+            if (activities.length > 0) {
+                panel.style.display = 'block';
+                list.innerHTML = activities.slice(0, 10).map(a => `
+                    <li class="activity-item">
+                        <div class="activity-icon ${a.type}">${a.icon}</div>
+                        <div class="activity-content">
+                            <div class="activity-text">${a.text}</div>
+                            <div class="activity-time">${a.date}</div>
+                        </div>
+                    </li>
+                `).join('');
+            }
+        }
+
+        function updateStats(stocks) {
+            document.getElementById('stat-stocks').textContent = stocks.length;
+            document.getElementById('stat-completed').textContent = 
+                stocks.reduce((sum, s) => sum + s.completedCalls.length, 0);
+            document.getElementById('stat-scheduled').textContent = 
+                stocks.reduce((sum, s) => sum + s.scheduledCalls.length, 0);
+            document.getElementById('stat-models').textContent = 
+                stocks.filter(s => s.modelCompleted).length;
+            document.getElementById('stat-conviction').textContent = 
+                stocks.filter(s => s.conviction === 'high').length;
+        }
+
+        function updateNavCounts(stocks) {
+            document.getElementById('nav-count-all').textContent = stocks.length;
+            document.getElementById('nav-count-active').textContent = stocks.filter(s => s.status === 'active').length;
+            document.getElementById('nav-count-monitoring').textContent = stocks.filter(s => s.status === 'monitoring').length;
+            document.getElementById('nav-count-semis').textContent = stocks.filter(s => s.sector === 'semis').length;
+            document.getElementById('nav-count-software').textContent = stocks.filter(s => s.sector === 'software').length;
+            document.getElementById('nav-count-internet').textContent = stocks.filter(s => s.sector === 'internet').length;
+            document.getElementById('nav-count-high').textContent = stocks.filter(s => s.priority === 'high').length;
+            document.getElementById('nav-count-medium').textContent = stocks.filter(s => s.priority === 'medium').length;
+            document.getElementById('nav-count-low').textContent = stocks.filter(s => s.priority === 'low').length;
+        }
+
+        function openStockDetail(issueNumber) {
+            const stock = allStocks.find(s => s.issueNumber === issueNumber);
+            if (!stock) return;
+
+            document.getElementById('modal-stock-title').textContent = `${stock.ticker} - ${stock.name || 'Details'}`;
+            
+            document.getElementById('modal-stock-body').innerHTML = `
+                <div class="detail-section">
+                    <div class="detail-section-title">Overview</div>
+                    <div class="detail-grid">
+                        <div class="detail-field">
+                            <div class="detail-field-label">Ticker</div>
+                            <div class="detail-field-value">${stock.ticker}</div>
+                        </div>
+                        <div class="detail-field">
+                            <div class="detail-field-label">Company</div>
+                            <div class="detail-field-value">${stock.name || '-'}</div>
+                        </div>
+                        <div class="detail-field">
+                            <div class="detail-field-label">Sector</div>
+                            <div class="detail-field-value">${stock.sector || '-'}</div>
+                        </div>
+                        <div class="detail-field">
+                            <div class="detail-field-label">Priority</div>
+                            <div class="detail-field-value">${stock.priority}</div>
+                        </div>
+                        <div class="detail-field">
+                            <div class="detail-field-label">Conviction</div>
+                            <div class="detail-field-value">${stock.conviction}</div>
+                        </div>
+                        <div class="detail-field">
+                            <div class="detail-field-label">Price Target</div>
+                            <div class="detail-field-value">${stock.priceTarget || '-'}</div>
+                        </div>
+                        <div class="detail-field">
+                            <div class="detail-field-label">Analyst</div>
+                            <div class="detail-field-value">${stock.analyst || '-'}</div>
+                        </div>
+                        <div class="detail-field">
+                            <div class="detail-field-label">Model Status</div>
+                            <div class="detail-field-value">${stock.modelCompleted ? '✅ Complete' : '⬜ In Progress'}</div>
+                        </div>
+                    </div>
+                </div>
+
+                ${stock.thesis ? `
+                    <div class="detail-section">
+                        <div class="detail-section-title">Investment Thesis</div>
+                        <div class="thesis-box">
+                            <p>${stock.thesis}</p>
+                        </div>
+                    </div>
+                ` : ''}
+
+                ${(stock.bullCase.length > 0 || stock.bearCase.length > 0) ? `
+                    <div class="detail-section">
+                        <div class="detail-section-title">Bull / Bear Case</div>
+                        <div class="bull-bear-grid">
+                            <div class="bull-box">
+                                <h4>🐂 Bull Case</h4>
+                                <ul>
+                                    ${stock.bullCase.length > 0 ? stock.bullCase.map(b => `<li>${b}</li>`).join('') : '<li>No bull points added</li>'}
+                                </ul>
+                            </div>
+                            <div class="bear-box">
+                                <h4>🐻 Bear Case</h4>
+                                <ul>
+                                    ${stock.bearCase.length > 0 ? stock.bearCase.map(b => `<li>${b}</li>`).join('') : '<li>No bear points added</li>'}
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                ` : ''}
+
+                <div class="detail-section">
+                    <div class="detail-section-title">Completed Calls (${stock.completedCalls.length})</div>
+                    ${stock.completedCalls.length > 0 ? `
+                        <ul class="calls-detail-list">
+                            ${stock.completedCalls.map(c => `
+                                <li class="call-detail-item">
+                                    <div class="call-detail-info">
+                                        <div class="call-detail-contact">${c.contact}</div>
+                                        ${c.notes ? `<div class="call-detail-notes">${c.notes}</div>` : ''}
+                                    </div>
+                                    <div class="call-detail-date">${c.date}</div>
+                                </li>
+                            `).join('')}
+                        </ul>
+                    ` : '<p style="color: var(--text-dim); font-size: 0.9rem;">No completed calls yet</p>'}
+                </div>
+
+                <div class="detail-section">
+                    <div class="detail-section-title">Scheduled Calls (${stock.scheduledCalls.length})</div>
+                    ${stock.scheduledCalls.length > 0 ? `
+                        <ul class="calls-detail-list">
+                            ${stock.scheduledCalls.map(c => `
+                                <li class="call-detail-item">
+                                    <div class="call-detail-info">
+                                        <div class="call-detail-contact">${c.contact}</div>
+                                        ${c.notes ? `<div class="call-detail-notes">${c.notes}</div>` : ''}
+                                    </div>
+                                    <div class="call-detail-date">${c.date}</div>
+                                </li>
+                            `).join('')}
+                        </ul>
+                    ` : '<p style="color: var(--text-dim); font-size: 0.9rem;">No scheduled calls</p>'}
+                </div>
+
+                <div class="detail-section" style="margin-bottom: 0;">
+                    <a href="${stock.issueUrl}" target="_blank" class="btn btn-secondary" style="width: 100%; justify-content: center;">
+                        View on GitHub →
+                    </a>
+                </div>
+            `;
+
+            document.getElementById('detail-modal').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('detail-modal').classList.remove('active');
+        }
+
+        // Auto-refresh every 60 seconds
+        setInterval(loadData, 60000);
     </script>
 </body>
 </html>
