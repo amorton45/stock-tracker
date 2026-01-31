@@ -1558,144 +1558,87 @@
                 stocks.filter(s => s.modelCompleted).length;
             document.getElementById('stat-conviction').textContent = 
                 stocks.filter(s => s.conviction === 'high').length;
-        }
 
-        function updateNavCounts(stocks) {
-            document.getElementById('nav-count-all').textContent = stocks.length;
-            document.getElementById('nav-count-active').textContent = stocks.filter(s => s.status === 'active').length;
-            document.getElementById('nav-count-monitoring').textContent = stocks.filter(s => s.status === 'monitoring').length;
-            document.getElementById('nav-count-semis').textContent = stocks.filter(s => s.sector === 'semis').length;
-            document.getElementById('nav-count-software').textContent = stocks.filter(s => s.sector === 'software').length;
-            document.getElementById('nav-count-internet').textContent = stocks.filter(s => s.sector === 'internet').length;
-            document.getElementById('nav-count-high').textContent = stocks.filter(s => s.priority === 'high').length;
-            document.getElementById('nav-count-medium').textContent = stocks.filter(s => s.priority === 'medium').length;
-            document.getElementById('nav-count-low').textContent = stocks.filter(s => s.priority === 'low').length;
-        }
-
-        function openStockDetail(issueNumber) {
-            const stock = allStocks.find(s => s.issueNumber === issueNumber);
-            if (!stock) return;
-
-            document.getElementById('modal-stock-title').textContent = `${stock.ticker} - ${stock.name || 'Details'}`;
+        // Export to CSV
+        function exportToCSV() {
+            const headers = ['Ticker', 'Company', 'Sector', 'Priority', 'Conviction', 'Price Target', 'Analyst', 'Model Complete', 'Completed Calls', 'Scheduled Calls', 'Thesis', 'Price', 'Change %'];
             
-            document.getElementById('modal-stock-body').innerHTML = `
-                <div class="detail-section">
-                    <div class="detail-section-title">Overview</div>
-                    <div class="detail-grid">
-                        <div class="detail-field">
-                            <div class="detail-field-label">Ticker</div>
-                            <div class="detail-field-value">${stock.ticker}</div>
-                        </div>
-                        <div class="detail-field">
-                            <div class="detail-field-label">Company</div>
-                            <div class="detail-field-value">${stock.name || '-'}</div>
-                        </div>
-                        <div class="detail-field">
-                            <div class="detail-field-label">Sector</div>
-                            <div class="detail-field-value">${stock.sector || '-'}</div>
-                        </div>
-                        <div class="detail-field">
-                            <div class="detail-field-label">Priority</div>
-                            <div class="detail-field-value">${stock.priority}</div>
-                        </div>
-                        <div class="detail-field">
-                            <div class="detail-field-label">Conviction</div>
-                            <div class="detail-field-value">${stock.conviction}</div>
-                        </div>
-                        <div class="detail-field">
-                            <div class="detail-field-label">Price Target</div>
-                            <div class="detail-field-value">${stock.priceTarget || '-'}</div>
-                        </div>
-                        <div class="detail-field">
-                            <div class="detail-field-label">Analyst</div>
-                            <div class="detail-field-value">${stock.analyst || '-'}</div>
-                        </div>
-                        <div class="detail-field">
-                            <div class="detail-field-label">Model Status</div>
-                            <div class="detail-field-value">${stock.modelCompleted ? '✅ Complete' : '⬜ In Progress'}</div>
-                        </div>
-                    </div>
-                </div>
+            const rows = allStocks.map(s => [
+                s.ticker,
+                s.name || '',
+                s.sector || '',
+                s.priority,
+                s.conviction,
+                s.priceTarget || '',
+                s.analyst || '',
+                s.modelCompleted ? 'Yes' : 'No',
+                s.completedCalls.length,
+                s.scheduledCalls.length,
+                '"' + (s.thesis || '').replace(/"/g, '""') + '"',
+                s.price || '',
+                s.priceChange || ''
+            ]);
 
-                ${stock.thesis ? `
-                    <div class="detail-section">
-                        <div class="detail-section-title">Investment Thesis</div>
-                        <div class="thesis-box">
-                            <p>${stock.thesis}</p>
-                        </div>
-                    </div>
-                ` : ''}
-
-                ${(stock.bullCase.length > 0 || stock.bearCase.length > 0) ? `
-                    <div class="detail-section">
-                        <div class="detail-section-title">Bull / Bear Case</div>
-                        <div class="bull-bear-grid">
-                            <div class="bull-box">
-                                <h4>🐂 Bull Case</h4>
-                                <ul>
-                                    ${stock.bullCase.length > 0 ? stock.bullCase.map(b => `<li>${b}</li>`).join('') : '<li>No bull points added</li>'}
-                                </ul>
-                            </div>
-                            <div class="bear-box">
-                                <h4>🐻 Bear Case</h4>
-                                <ul>
-                                    ${stock.bearCase.length > 0 ? stock.bearCase.map(b => `<li>${b}</li>`).join('') : '<li>No bear points added</li>'}
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                ` : ''}
-
-                <div class="detail-section">
-                    <div class="detail-section-title">Completed Calls (${stock.completedCalls.length})</div>
-                    ${stock.completedCalls.length > 0 ? `
-                        <ul class="calls-detail-list">
-                            ${stock.completedCalls.map(c => `
-                                <li class="call-detail-item">
-                                    <div class="call-detail-info">
-                                        <div class="call-detail-contact">${c.contact}</div>
-                                        ${c.notes ? `<div class="call-detail-notes">${c.notes}</div>` : ''}
-                                    </div>
-                                    <div class="call-detail-date">${c.date}</div>
-                                </li>
-                            `).join('')}
-                        </ul>
-                    ` : '<p style="color: var(--text-dim); font-size: 0.9rem;">No completed calls yet</p>'}
-                </div>
-
-                <div class="detail-section">
-                    <div class="detail-section-title">Scheduled Calls (${stock.scheduledCalls.length})</div>
-                    ${stock.scheduledCalls.length > 0 ? `
-                        <ul class="calls-detail-list">
-                            ${stock.scheduledCalls.map(c => `
-                                <li class="call-detail-item">
-                                    <div class="call-detail-info">
-                                        <div class="call-detail-contact">${c.contact}</div>
-                                        ${c.notes ? `<div class="call-detail-notes">${c.notes}</div>` : ''}
-                                    </div>
-                                    <div class="call-detail-date">${c.date}</div>
-                                </li>
-                            `).join('')}
-                        </ul>
-                    ` : '<p style="color: var(--text-dim); font-size: 0.9rem;">No scheduled calls</p>'}
-                </div>
-
-                <div class="detail-section" style="margin-bottom: 0;">
-                    <a href="${stock.issueUrl}" target="_blank" class="btn btn-secondary" style="width: 100%; justify-content: center;">
-                        View on GitHub →
-                    </a>
-                </div>
-            `;
-
-            document.getElementById('detail-modal').classList.add('active');
+            const csv = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+            
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'stock-research-' + new Date().toISOString().split('T')[0] + '.csv';
+            link.click();
         }
 
-        function closeModal() {
-            document.getElementById('detail-modal').classList.remove('active');
-        }
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            // Ignore if typing in an input
+            if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+            
+            switch(e.key) {
+                case '/':
+                    e.preventDefault();
+                    document.getElementById('search-input').focus();
+                    break;
+                case 'r':
+                    if (!e.metaKey && !e.ctrlKey) loadData();
+                    break;
+                case 'Escape':
+                    closeModal();
+                    document.getElementById('search-input').blur();
+                    break;
+                case '1':
+                    document.querySelector('[data-view="all"]').click();
+                    break;
+                case '2':
+                    document.querySelector('[data-view="active"]').click();
+                    break;
+                case 't':
+                    document.querySelector('[data-view-type="table"]').click();
+                    break;
+                case 'c':
+                    document.querySelector('[data-view-type="cards"]').click();
+                    break;
+                case 'e':
+                    if (!e.metaKey && !e.ctrlKey) exportToCSV();
+                    break;
+            }
+        });
 
-        // Auto-refresh every 60 seconds
-        setInterval(loadData, 60000);
+        // Add export button after page loads
+        setTimeout(() => {
+            const headerActions = document.querySelector('.header-actions');
+            if (headerActions) {
+                const exportBtn = document.createElement('button');
+                exportBtn.className = 'btn btn-secondary';
+                exportBtn.innerHTML = '📥 Export';
+                exportBtn.onclick = exportToCSV;
+                exportBtn.title = 'Export to CSV (E)';
+                headerActions.appendChild(exportBtn);
+            }
+        }, 100);
+
+        // Keyboard shortcut help
+        console.log('%c📊 Stock Research Tracker - Keyboard Shortcuts', 'font-size: 14px; font-weight: bold;');
+        console.log('/  - Focus search\nr  - Refresh data\nt  - Table view\nc  - Cards view\ne  - Export CSV\n1  - All stocks\n2  - Active only\nEsc - Close modal');
     </script>
 </body>
 </html>
