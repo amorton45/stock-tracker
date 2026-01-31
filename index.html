@@ -936,8 +936,34 @@
         /* Responsive */
         @media (max-width: 1024px) {
             .sidebar {
-                display: none;
+                position: fixed;
+                left: -280px;
+                z-index: 50;
+                transition: left 0.3s;
             }
+            .sidebar.open {
+                left: 0;
+            }
+            .main-content {
+                margin-left: 0;
+            }
+            .stats-bar {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            .mobile-menu-btn {
+                display: block !important;
+            }
+            .mobile-overlay {
+                display: none;
+                position: fixed;
+                inset: 0;
+                background: rgba(0,0,0,0.5);
+                z-index: 40;
+            }
+            .mobile-overlay.open {
+                display: block;
+            }
+        }
             .main-content {
                 margin-left: 0;
             }
