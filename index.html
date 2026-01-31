@@ -3,26 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Stock Research Tracker</title>
+    <title>Research Hub</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-primary: #0f172a;
-            --bg-secondary: #1e293b;
-            --bg-tertiary: #334155;
-            --bg-hover: #475569;
-            --text-primary: #f8fafc;
-            --text-secondary: #e2e8f0;
-            --text-muted: #94a3b8;
-            --text-dim: #64748b;
-            --border: #334155;
-            --accent: #3b82f6;
-            --accent-hover: #2563eb;
-            --success: #22c55e;
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #12121a;
+            --bg-card: #1a1a24;
+            --bg-hover: #22222e;
+            --bg-input: #0f0f15;
+            --border: #2a2a3a;
+            --border-light: #3a3a4a;
+            --text-primary: #ffffff;
+            --text-secondary: #a0a0b0;
+            --text-muted: #606070;
+            --accent: #6366f1;
+            --accent-hover: #5558e3;
+            --success: #10b981;
+            --success-bg: rgba(16, 185, 129, 0.1);
             --warning: #f59e0b;
+            --warning-bg: rgba(245, 158, 11, 0.1);
             --danger: #ef4444;
-            --purple: #8b5cf6;
-            --cyan: #06b6d4;
-            --pink: #ec4899;
+            --danger-bg: rgba(239, 68, 68, 0.1);
+            --chart-1: #6366f1;
+            --chart-2: #8b5cf6;
+            --chart-3: #ec4899;
+            --chart-4: #06b6d4;
         }
 
         * {
@@ -32,147 +40,304 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             background: var(--bg-primary);
-            color: var(--text-secondary);
+            color: var(--text-primary);
             min-height: 100vh;
+            line-height: 1.5;
         }
 
-        /* Layout */
-        .app-container {
-            display: flex;
-            min-height: 100vh;
-        }
-
-        .sidebar {
-            width: 260px;
+        /* Top Navigation */
+        .top-nav {
             background: var(--bg-secondary);
-            border-right: 1px solid var(--border);
-            padding: 1.5rem;
-            position: fixed;
-            height: 100vh;
-            overflow-y: auto;
-        }
-
-        .main-content {
-            flex: 1;
-            margin-left: 260px;
-            padding: 2rem;
-        }
-
-        /* Sidebar */
-        .logo {
-            font-size: 1.25rem;
-            font-weight: 700;
-            color: var(--text-primary);
-            margin-bottom: 2rem;
+            border-bottom: 1px solid var(--border);
+            padding: 0 2rem;
+            height: 60px;
             display: flex;
             align-items: center;
-            gap: 0.5rem;
-        }
-
-        .nav-section {
-            margin-bottom: 2rem;
-        }
-
-        .nav-label {
-            font-size: 0.7rem;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            color: var(--text-dim);
-            margin-bottom: 0.75rem;
-            font-weight: 600;
-        }
-
-        .nav-item {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            padding: 0.6rem 0.75rem;
-            border-radius: 8px;
-            color: var(--text-muted);
-            cursor: pointer;
-            transition: all 0.2s;
-            font-size: 0.9rem;
-            margin-bottom: 0.25rem;
-        }
-
-        .nav-item:hover {
-            background: var(--bg-tertiary);
-            color: var(--text-primary);
-        }
-
-        .nav-item.active {
-            background: var(--accent);
-            color: white;
-        }
-
-        .nav-item .count {
-            margin-left: auto;
-            background: var(--bg-tertiary);
-            padding: 0.15rem 0.5rem;
-            border-radius: 10px;
-            font-size: 0.75rem;
-        }
-
-        .nav-item.active .count {
-            background: rgba(255,255,255,0.2);
-        }
-
-        /* Header */
-        .page-header {
-            display: flex;
             justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.5rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
 
-        .page-title {
-            font-size: 1.5rem;
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
             font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .nav-brand-icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, var(--accent), var(--chart-2));
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .nav-tabs {
+            display: flex;
+            gap: 0.25rem;
+            height: 100%;
+        }
+
+        .nav-tab {
+            padding: 0 1.25rem;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .nav-tab:hover {
             color: var(--text-primary);
         }
 
-        .header-actions {
-            display: flex;
-            gap: 0.75rem;
-            align-items: center;
+        .nav-tab.active {
+            color: var(--text-primary);
+            border-bottom-color: var(--accent);
         }
 
-        .search-box {
+        .nav-actions {
             display: flex;
             align-items: center;
-            background: var(--bg-secondary);
+            gap: 1rem;
+        }
+
+        .search-global {
+            display: flex;
+            align-items: center;
+            background: var(--bg-input);
             border: 1px solid var(--border);
             border-radius: 8px;
             padding: 0.5rem 1rem;
             gap: 0.5rem;
+            width: 280px;
         }
 
-        .search-box input {
+        .search-global input {
             background: transparent;
             border: none;
-            color: var(--text-secondary);
+            color: var(--text-primary);
             outline: none;
-            width: 200px;
+            width: 100%;
+            font-size: 0.875rem;
+        }
+
+        .search-global input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .search-icon {
+            color: var(--text-muted);
             font-size: 0.9rem;
         }
 
-        .search-box input::placeholder {
-            color: var(--text-dim);
+        .avatar {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, var(--chart-1), var(--chart-3));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.875rem;
+            cursor: pointer;
+        }
+
+        /* Main Layout */
+        .main-container {
+            display: flex;
+            min-height: calc(100vh - 60px);
+        }
+
+        .sidebar {
+            width: 240px;
+            background: var(--bg-secondary);
+            border-right: 1px solid var(--border);
+            padding: 1.5rem 0;
+            flex-shrink: 0;
+        }
+
+        .sidebar-section {
+            margin-bottom: 2rem;
+        }
+
+        .sidebar-title {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+            padding: 0 1.5rem;
+            margin-bottom: 0.75rem;
+            font-weight: 600;
+        }
+
+        .sidebar-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.6rem 1.5rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.15s;
+            font-size: 0.875rem;
+        }
+
+        .sidebar-item:hover {
+            background: var(--bg-hover);
+            color: var(--text-primary);
+        }
+
+        .sidebar-item.active {
+            background: rgba(99, 102, 241, 0.1);
+            color: var(--accent);
+        }
+
+        .sidebar-item-icon {
+            width: 20px;
+            text-align: center;
+        }
+
+        .sidebar-item-count {
+            margin-left: auto;
+            background: var(--bg-card);
+            padding: 0.15rem 0.5rem;
+            border-radius: 10px;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .content {
+            flex: 1;
+            padding: 2rem;
+            overflow-y: auto;
+        }
+
+        /* Dashboard Header */
+        .dashboard-header {
+            margin-bottom: 2rem;
+        }
+
+        .dashboard-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .dashboard-subtitle {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        /* Portfolio Summary Cards */
+        .portfolio-summary {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.25rem;
+            margin-bottom: 2rem;
+        }
+
+        .summary-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.25rem;
+        }
+
+        .summary-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .summary-card-title {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .summary-card-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+        }
+
+        .summary-card-icon.blue { background: rgba(99, 102, 241, 0.15); }
+        .summary-card-icon.green { background: var(--success-bg); }
+        .summary-card-icon.yellow { background: var(--warning-bg); }
+        .summary-card-icon.purple { background: rgba(139, 92, 246, 0.15); }
+
+        .summary-card-value {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+
+        .summary-card-change {
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .summary-card-change.positive { color: var(--success); }
+        .summary-card-change.negative { color: var(--danger); }
+
+        /* Stock Table Section */
+        .section {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+            overflow: hidden;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .section-title {
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .section-actions {
+            display: flex;
+            gap: 0.5rem;
         }
 
         .btn {
-            padding: 0.6rem 1.25rem;
-            border-radius: 8px;
-            font-size: 0.9rem;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-size: 0.8rem;
             font-weight: 500;
             cursor: pointer;
             border: none;
-            transition: all 0.2s;
-            display: flex;
+            transition: all 0.15s;
+            display: inline-flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: 0.4rem;
         }
 
         .btn-primary {
@@ -185,674 +350,601 @@
         }
 
         .btn-secondary {
-            background: var(--bg-tertiary);
+            background: var(--bg-input);
             color: var(--text-secondary);
+            border: 1px solid var(--border);
         }
 
         .btn-secondary:hover {
             background: var(--bg-hover);
-        }
-
-        .btn-icon {
-            padding: 0.5rem;
-            background: var(--bg-secondary);
-            border: 1px solid var(--border);
-        }
-
-        /* Stats Bar */
-        .stats-bar {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 1rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .stat-card {
-            background: var(--bg-secondary);
-            padding: 1.25rem;
-            border-radius: 12px;
-            border: 1px solid var(--border);
-        }
-
-        .stat-label {
-            font-size: 0.75rem;
-            color: var(--text-dim);
-            margin-bottom: 0.5rem;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-
-        .stat-value {
-            font-size: 1.75rem;
-            font-weight: 700;
             color: var(--text-primary);
         }
 
-        .stat-value.positive { color: var(--success); }
-        .stat-value.warning { color: var(--warning); }
-
-        /* View Toggle */
-        .view-toggle {
-            display: flex;
-            background: var(--bg-secondary);
-            border-radius: 8px;
-            padding: 0.25rem;
-            border: 1px solid var(--border);
-        }
-
-        .view-toggle button {
-            padding: 0.4rem 0.75rem;
-            border: none;
-            background: transparent;
-            color: var(--text-muted);
-            cursor: pointer;
-            border-radius: 6px;
-            font-size: 0.85rem;
-            transition: all 0.2s;
-        }
-
-        .view-toggle button.active {
-            background: var(--bg-tertiary);
-            color: var(--text-primary);
-        }
-
-        /* Cards View */
-        .stocks-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
-            gap: 1.25rem;
-        }
-
-        .stock-card {
-            background: var(--bg-secondary);
-            border-radius: 16px;
-            border: 1px solid var(--border);
-            overflow: hidden;
-            transition: border-color 0.2s;
-        }
-
-        .stock-card:hover {
-            border-color: var(--bg-hover);
-        }
-
-        .stock-card-header {
-            padding: 1.25rem;
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-        }
-
-        .stock-info {
-            display: flex;
-            gap: 1rem;
-            align-items: flex-start;
-        }
-
-        .stock-ticker-large {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--text-primary);
-        }
-
-        .stock-name {
-            font-size: 0.85rem;
-            color: var(--text-muted);
-            margin-top: 0.25rem;
-        }
-
-        .stock-price {
-            text-align: right;
-        }
-
-        .stock-price-value {
-            font-size: 1.25rem;
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-
-        .stock-price-change {
-            font-size: 0.8rem;
-            margin-top: 0.25rem;
-        }
-
-        .stock-price-change.positive { color: var(--success); }
-        .stock-price-change.negative { color: var(--danger); }
-
-        .stock-card-body {
-            padding: 1.25rem;
-        }
-
-        .stock-meta {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-            margin-bottom: 1rem;
-        }
-
-        .tag {
-            padding: 0.25rem 0.6rem;
-            border-radius: 6px;
-            font-size: 0.75rem;
-            font-weight: 500;
-        }
-
-        .tag-sector {
-            background: rgba(139, 92, 246, 0.15);
-            color: var(--purple);
-        }
-
-        .tag-priority-high {
-            background: rgba(239, 68, 68, 0.15);
-            color: var(--danger);
-        }
-
-        .tag-priority-medium {
-            background: rgba(245, 158, 11, 0.15);
-            color: var(--warning);
-        }
-
-        .tag-priority-low {
-            background: rgba(107, 114, 128, 0.15);
-            color: var(--text-muted);
-        }
-
-        .tag-analyst {
-            background: rgba(6, 182, 212, 0.15);
-            color: var(--cyan);
-        }
-
-        .stock-thesis {
-            background: var(--bg-primary);
-            border-radius: 8px;
-            padding: 0.75rem 1rem;
-            margin-bottom: 1rem;
-            font-size: 0.85rem;
-            color: var(--text-muted);
-            line-height: 1.5;
-        }
-
-        .stock-thesis strong {
-            color: var(--text-secondary);
-            font-weight: 500;
-        }
-
-        .stock-metrics {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 0.75rem;
-            margin-bottom: 1rem;
-        }
-
-        .metric {
-            background: var(--bg-primary);
-            padding: 0.75rem;
-            border-radius: 8px;
-            text-align: center;
-        }
-
-        .metric-value {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-
-        .metric-label {
-            font-size: 0.7rem;
-            color: var(--text-dim);
-            margin-top: 0.25rem;
-            text-transform: uppercase;
-        }
-
-        .stock-progress {
-            margin-bottom: 1rem;
-        }
-
-        .progress-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 0.5rem;
-        }
-
-        .progress-label {
-            font-size: 0.8rem;
-            color: var(--text-muted);
-        }
-
-        .progress-value {
-            font-size: 0.8rem;
-            color: var(--text-primary);
-            font-weight: 500;
-        }
-
-        .progress-bar {
-            height: 6px;
-            background: var(--bg-primary);
-            border-radius: 3px;
-            overflow: hidden;
-        }
-
-        .progress-fill {
-            height: 100%;
-            background: var(--accent);
-            border-radius: 3px;
-            transition: width 0.3s;
-        }
-
-        .progress-fill.complete {
-            background: var(--success);
-        }
-
-        .calls-summary {
-            display: flex;
-            gap: 1rem;
-            padding-top: 1rem;
-            border-top: 1px solid var(--border);
-        }
-
-        .call-stat {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 0.85rem;
-            color: var(--text-muted);
-        }
-
-        .call-stat-icon {
-            font-size: 1rem;
-        }
-
-        .call-stat-value {
-            color: var(--text-primary);
-            font-weight: 500;
-        }
-
-        /* Table View */
-        .table-container {
-            background: var(--bg-secondary);
-            border-radius: 12px;
-            border: 1px solid var(--border);
-            overflow: hidden;
-        }
-
-        .data-table {
+        /* Stock Portfolio Table */
+        .portfolio-table {
             width: 100%;
             border-collapse: collapse;
         }
 
-        .data-table th {
-            background: var(--bg-tertiary);
-            padding: 0.875rem 1rem;
+        .portfolio-table th {
             text-align: left;
+            padding: 0.875rem 1.5rem;
             font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-muted);
             text-transform: uppercase;
             letter-spacing: 0.05em;
-            color: var(--text-muted);
-            font-weight: 600;
-            cursor: pointer;
-            user-select: none;
-        }
-
-        .data-table th:hover {
-            background: var(--bg-hover);
-        }
-
-        .data-table th .sort-icon {
-            margin-left: 0.5rem;
-            opacity: 0.5;
-        }
-
-        .data-table td {
-            padding: 1rem;
-            border-bottom: 1px solid var(--border);
-            font-size: 0.9rem;
-        }
-
-        .data-table tr:hover {
-            background: rgba(255, 255, 255, 0.02);
-        }
-
-        .table-ticker {
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-
-        .table-company {
-            color: var(--text-muted);
-            font-size: 0.8rem;
-        }
-
-        .conviction-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.25rem;
-            padding: 0.25rem 0.5rem;
-            border-radius: 4px;
-            font-size: 0.8rem;
-            font-weight: 500;
-        }
-
-        .conviction-high {
-            background: rgba(34, 197, 94, 0.15);
-            color: var(--success);
-        }
-
-        .conviction-medium {
-            background: rgba(245, 158, 11, 0.15);
-            color: var(--warning);
-        }
-
-        .conviction-low {
-            background: rgba(107, 114, 128, 0.15);
-            color: var(--text-muted);
-        }
-
-        /* Activity Feed */
-        .activity-panel {
             background: var(--bg-secondary);
-            border-radius: 12px;
-            border: 1px solid var(--border);
-            padding: 1.25rem;
-            margin-top: 1.5rem;
-        }
-
-        .activity-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1rem;
-        }
-
-        .activity-title {
-            font-size: 1rem;
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-
-        .activity-list {
-            list-style: none;
-        }
-
-        .activity-item {
-            display: flex;
-            gap: 0.75rem;
-            padding: 0.75rem 0;
             border-bottom: 1px solid var(--border);
         }
 
-        .activity-item:last-child {
+        .portfolio-table td {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.875rem;
+        }
+
+        .portfolio-table tr:last-child td {
             border-bottom: none;
         }
 
-        .activity-icon {
-            width: 32px;
-            height: 32px;
+        .portfolio-table tr {
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+
+        .portfolio-table tbody tr:hover {
+            background: var(--bg-hover);
+        }
+
+        .stock-cell {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .stock-logo {
+            width: 40px;
+            height: 40px;
+            background: var(--bg-input);
             border-radius: 8px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 0.9rem;
-            flex-shrink: 0;
+            font-weight: 700;
+            font-size: 0.8rem;
+            color: var(--accent);
         }
 
-        .activity-icon.call {
-            background: rgba(34, 197, 94, 0.15);
+        .stock-info h4 {
+            font-weight: 600;
+            margin-bottom: 0.1rem;
         }
 
-        .activity-icon.stock {
-            background: rgba(59, 130, 246, 0.15);
+        .stock-info span {
+            font-size: 0.75rem;
+            color: var(--text-muted);
         }
 
-        .activity-icon.model {
-            background: rgba(139, 92, 246, 0.15);
+        .price-cell {
+            font-weight: 600;
         }
 
-        .activity-content {
-            flex: 1;
+        .change-cell {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            padding: 0.25rem 0.6rem;
+            border-radius: 6px;
+            font-weight: 500;
+            font-size: 0.8rem;
         }
 
-        .activity-text {
-            font-size: 0.85rem;
-            color: var(--text-secondary);
+        .change-cell.positive {
+            background: var(--success-bg);
+            color: var(--success);
         }
 
-        .activity-text strong {
-            color: var(--text-primary);
+        .change-cell.negative {
+            background: var(--danger-bg);
+            color: var(--danger);
+        }
+
+        .target-cell {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .target-price {
             font-weight: 500;
         }
 
-        .activity-time {
+        .upside-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
             font-size: 0.75rem;
-            color: var(--text-dim);
-            margin-top: 0.25rem;
+            font-weight: 600;
         }
 
-        /* Modal */
+        .upside-badge.high {
+            background: var(--success-bg);
+            color: var(--success);
+        }
+
+        .upside-badge.medium {
+            background: var(--warning-bg);
+            color: var(--warning);
+        }
+
+        .upside-badge.low {
+            background: var(--danger-bg);
+            color: var(--danger);
+        }
+
+        .conviction-cell {
+            display: flex;
+            gap: 0.2rem;
+        }
+
+        .conviction-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--border);
+        }
+
+        .conviction-dot.filled {
+            background: var(--accent);
+        }
+
+        .conviction-dot.filled.high { background: var(--success); }
+        .conviction-dot.filled.medium { background: var(--warning); }
+
+        .status-badge {
+            padding: 0.3rem 0.6rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .status-badge.active {
+            background: var(--success-bg);
+            color: var(--success);
+        }
+
+        .status-badge.monitoring {
+            background: rgba(99, 102, 241, 0.1);
+            color: var(--accent);
+        }
+
+        .progress-mini {
+            width: 60px;
+            height: 4px;
+            background: var(--bg-input);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .progress-mini-fill {
+            height: 100%;
+            background: var(--accent);
+            border-radius: 2px;
+        }
+
+        /* Calendar Section */
+        .calendar-section {
+            display: grid;
+            grid-template-columns: 1fr 320px;
+            gap: 1.5rem;
+        }
+
+        .calendar-main {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+        }
+
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .calendar-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .calendar-nav {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .calendar-nav-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            background: var(--bg-input);
+            color: var(--text-secondary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .calendar-nav-btn:hover {
+            background: var(--bg-hover);
+            color: var(--text-primary);
+        }
+
+        .calendar-month {
+            font-weight: 600;
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 0.25rem;
+        }
+
+        .calendar-day-header {
+            text-align: center;
+            padding: 0.5rem;
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        .calendar-day {
+            aspect-ratio: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 0.5rem;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: background 0.15s;
+            position: relative;
+        }
+
+        .calendar-day:hover {
+            background: var(--bg-hover);
+        }
+
+        .calendar-day.other-month {
+            color: var(--text-muted);
+        }
+
+        .calendar-day.today {
+            background: var(--accent);
+            color: white;
+        }
+
+        .calendar-day.has-event::after {
+            content: '';
+            width: 6px;
+            height: 6px;
+            background: var(--warning);
+            border-radius: 50%;
+            position: absolute;
+            bottom: 4px;
+        }
+
+        .calendar-day.has-earnings::after {
+            background: var(--success);
+        }
+
+        .upcoming-events {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+        }
+
+        .upcoming-header {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .event-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .event-item {
+            display: flex;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            background: var(--bg-secondary);
+            border-radius: 8px;
+        }
+
+        .event-date {
+            width: 48px;
+            height: 48px;
+            background: var(--bg-input);
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .event-date-month {
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        .event-date-day {
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+
+        .event-info {
+            flex: 1;
+        }
+
+        .event-title {
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 0.15rem;
+        }
+
+        .event-type {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .event-type.earnings {
+            color: var(--success);
+        }
+
+        /* Stock Detail Modal */
         .modal-overlay {
             display: none;
             position: fixed;
             inset: 0;
-            background: rgba(0, 0, 0, 0.7);
-            z-index: 100;
-            align-items: center;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 200;
+            align-items: flex-start;
             justify-content: center;
             padding: 2rem;
+            overflow-y: auto;
         }
 
         .modal-overlay.active {
             display: flex;
         }
 
-        .modal {
+        .stock-detail-modal {
             background: var(--bg-secondary);
             border-radius: 16px;
             width: 100%;
-            max-width: 600px;
-            max-height: 90vh;
-            overflow-y: auto;
+            max-width: 900px;
             border: 1px solid var(--border);
+            margin: auto;
         }
 
         .modal-header {
-            padding: 1.5rem;
-            border-bottom: 1px solid var(--border);
             display: flex;
             justify-content: space-between;
-            align-items: center;
+            align-items: flex-start;
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid var(--border);
         }
 
-        .modal-title {
+        .modal-stock-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .modal-stock-logo {
+            width: 56px;
+            height: 56px;
+            background: var(--bg-input);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: var(--accent);
+        }
+
+        .modal-stock-info h2 {
             font-size: 1.25rem;
-            font-weight: 600;
-            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .modal-stock-info p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
         }
 
         .modal-close {
-            background: none;
-            border: none;
-            color: var(--text-dim);
-            font-size: 1.5rem;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             cursor: pointer;
-            padding: 0.25rem;
+            color: var(--text-secondary);
+            font-size: 1.25rem;
         }
 
         .modal-close:hover {
+            background: var(--bg-hover);
             color: var(--text-primary);
         }
 
         .modal-body {
-            padding: 1.5rem;
+            padding: 2rem;
         }
 
-        .modal-footer {
-            padding: 1rem 1.5rem;
-            border-top: 1px solid var(--border);
-            display: flex;
-            justify-content: flex-end;
-            gap: 0.75rem;
+        .modal-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
         }
 
-        /* Stock Detail Modal */
-        .detail-section {
-            margin-bottom: 1.5rem;
+        .modal-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.25rem;
         }
 
-        .detail-section-title {
-            font-size: 0.8rem;
+        .modal-card-title {
+            font-size: 0.75rem;
             text-transform: uppercase;
             letter-spacing: 0.05em;
-            color: var(--text-dim);
+            color: var(--text-muted);
             margin-bottom: 0.75rem;
             font-weight: 600;
         }
 
-        .detail-grid {
+        .modal-metrics {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: 1rem;
         }
 
-        .detail-field {
-            background: var(--bg-primary);
-            padding: 0.75rem;
+        .modal-metric {
+            text-align: center;
+            padding: 1rem;
+            background: var(--bg-secondary);
             border-radius: 8px;
         }
 
-        .detail-field-label {
-            font-size: 0.7rem;
-            color: var(--text-dim);
-            text-transform: uppercase;
+        .modal-metric-value {
+            font-size: 1.5rem;
+            font-weight: 700;
             margin-bottom: 0.25rem;
         }
 
-        .detail-field-value {
+        .modal-metric-value.positive { color: var(--success); }
+        .modal-metric-value.negative { color: var(--danger); }
+
+        .modal-metric-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .thesis-content {
             font-size: 0.9rem;
-            color: var(--text-primary);
+            line-height: 1.7;
+            color: var(--text-secondary);
         }
 
-        .thesis-box {
-            background: var(--bg-primary);
-            border-radius: 8px;
-            padding: 1rem;
-        }
-
-        .thesis-box h4 {
-            font-size: 0.85rem;
-            color: var(--text-primary);
-            margin-bottom: 0.5rem;
-        }
-
-        .thesis-box p {
-            font-size: 0.85rem;
-            color: var(--text-muted);
-            line-height: 1.5;
-        }
-
-        .bull-bear-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 1rem;
-        }
-
-        .bull-box, .bear-box {
-            background: var(--bg-primary);
-            border-radius: 8px;
-            padding: 1rem;
-        }
-
-        .bull-box {
-            border-left: 3px solid var(--success);
-        }
-
-        .bear-box {
-            border-left: 3px solid var(--danger);
-        }
-
-        .bull-box h4, .bear-box h4 {
-            font-size: 0.8rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .bull-box h4 { color: var(--success); }
-        .bear-box h4 { color: var(--danger); }
-
-        .bull-box ul, .bear-box ul {
+        .case-list {
             list-style: none;
-            font-size: 0.85rem;
-            color: var(--text-muted);
         }
 
-        .bull-box li, .bear-box li {
-            padding: 0.25rem 0;
+        .case-list li {
+            padding: 0.5rem 0;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: flex-start;
+            gap: 0.5rem;
         }
 
-        .bull-box li::before {
-            content: "+ ";
+        .case-list li::before {
+            font-size: 0.75rem;
+            flex-shrink: 0;
+            margin-top: 0.2rem;
+        }
+
+        .case-list.bull li::before {
+            content: "▲";
             color: var(--success);
         }
 
-        .bear-box li::before {
-            content: "− ";
+        .case-list.bear li::before {
+            content: "▼";
             color: var(--danger);
         }
 
-        .calls-detail-list {
-            list-style: none;
-        }
-
-        .call-detail-item {
+        .call-log-item {
             display: flex;
             justify-content: space-between;
-            align-items: flex-start;
+            align-items: center;
             padding: 0.75rem;
-            background: var(--bg-primary);
+            background: var(--bg-secondary);
             border-radius: 8px;
             margin-bottom: 0.5rem;
         }
 
-        .call-detail-info {
-            flex: 1;
+        .call-log-info {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
         }
 
-        .call-detail-contact {
+        .call-log-icon {
+            width: 32px;
+            height: 32px;
+            background: var(--success-bg);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             font-size: 0.9rem;
-            color: var(--text-primary);
+        }
+
+        .call-log-icon.scheduled {
+            background: rgba(99, 102, 241, 0.15);
+        }
+
+        .call-log-name {
             font-weight: 500;
+            font-size: 0.9rem;
         }
 
-        .call-detail-type {
-            font-size: 0.75rem;
-            color: var(--text-dim);
-            margin-top: 0.25rem;
-        }
-
-        .call-detail-notes {
+        .call-log-notes {
             font-size: 0.8rem;
             color: var(--text-muted);
-            margin-top: 0.5rem;
-            line-height: 1.4;
         }
 
-        .call-detail-date {
+        .call-log-date {
             font-size: 0.8rem;
-            color: var(--text-dim);
+            color: var(--text-muted);
         }
 
-        /* Loading */
-        .loading {
+        /* Loading & Empty States */
+        .loading-container {
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             padding: 4rem;
-            color: var(--text-dim);
+            color: var(--text-muted);
         }
 
         .loading-spinner {
             width: 40px;
             height: 40px;
-            border: 3px solid var(--bg-tertiary);
+            border: 3px solid var(--border);
             border-top-color: var(--accent);
             border-radius: 50%;
             animation: spin 1s linear infinite;
@@ -865,350 +957,364 @@
 
         .empty-state {
             text-align: center;
-            padding: 4rem;
-            color: var(--text-dim);
+            padding: 3rem;
+            color: var(--text-muted);
         }
 
         .empty-state h3 {
-            color: var(--text-muted);
+            color: var(--text-secondary);
             margin-bottom: 0.5rem;
         }
 
-        /* Randy Note */
-        .randy-helper {
-            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(139, 92, 246, 0.1));
-            border: 1px solid rgba(59, 130, 246, 0.3);
+        /* Randy Helper */
+        .randy-banner {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(139, 92, 246, 0.1));
+            border: 1px solid rgba(99, 102, 241, 0.2);
             border-radius: 12px;
-            padding: 1rem 1.25rem;
-            margin-bottom: 1.5rem;
+            padding: 1rem 1.5rem;
+            margin-bottom: 2rem;
             display: flex;
             align-items: center;
-            gap: 0.75rem;
+            gap: 1rem;
         }
 
-        .randy-helper-icon {
-            font-size: 1.5rem;
+        .randy-avatar {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--accent), var(--chart-2));
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
         }
 
-        .randy-helper-text {
-            font-size: 0.9rem;
-            color: var(--text-muted);
+        .randy-text {
+            flex: 1;
         }
 
-        .randy-helper-text strong {
+        .randy-text strong {
             color: var(--accent);
         }
 
-        /* Filter Bar */
-        .filter-bar {
-            display: flex;
-            gap: 0.75rem;
-            margin-bottom: 1.5rem;
-            flex-wrap: wrap;
-        }
-
-        .filter-group {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .filter-label {
-            font-size: 0.8rem;
-            color: var(--text-dim);
-        }
-
-        .filter-select {
-            background: var(--bg-secondary);
-            border: 1px solid var(--border);
-            border-radius: 6px;
-            padding: 0.4rem 0.75rem;
+        .randy-text p {
+            font-size: 0.875rem;
             color: var(--text-secondary);
-            font-size: 0.85rem;
-            cursor: pointer;
-        }
-
-        .filter-select:focus {
-            outline: none;
-            border-color: var(--accent);
         }
 
         /* Responsive */
-        @media (max-width: 1024px) {
-            .sidebar {
-                position: fixed;
-                left: -280px;
-                z-index: 50;
-                transition: left 0.3s;
+        @media (max-width: 1200px) {
+            .portfolio-summary {
+                grid-template-columns: repeat(2, 1fr);
             }
-            .sidebar.open {
-                left: 0;
-            }
-            .main-content {
-                margin-left: 0;
-            }
-            .stats-bar {
-                grid-template-columns: repeat(3, 1fr);
-            }
-            .mobile-menu-btn {
-                display: block !important;
-            }
-            .mobile-overlay {
-                display: none;
-                position: fixed;
-                inset: 0;
-                background: rgba(0,0,0,0.5);
-                z-index: 40;
-            }
-            .mobile-overlay.open {
-                display: block;
-            }
-        }
-            .main-content {
-                margin-left: 0;
-            }
-            .stats-bar {
-                grid-template-columns: repeat(3, 1fr);
+            .calendar-section {
+                grid-template-columns: 1fr;
             }
         }
 
         @media (max-width: 768px) {
-            .stats-bar {
-                grid-template-columns: repeat(2, 1fr);
+            .sidebar {
+                display: none;
             }
-            .stocks-grid {
+            .top-nav {
+                padding: 0 1rem;
+            }
+            .search-global {
+                display: none;
+            }
+            .content {
+                padding: 1rem;
+            }
+            .portfolio-summary {
                 grid-template-columns: 1fr;
             }
-            .page-header {
-                flex-direction: column;
-                gap: 1rem;
-                align-items: flex-start;
+            .modal-grid {
+                grid-template-columns: 1fr;
             }
-            .header-actions {
-                width: 100%;
-                flex-wrap: wrap;
-            }
-            .search-box {
-                flex: 1;
-            }
-            .search-box input {
-                width: 100%;
-            }
+        }
+
+        /* Tab content visibility */
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
         }
     </style>
 </head>
 <body>
-    <div class="app-container">
+    <!-- Top Navigation -->
+    <nav class="top-nav">
+        <div class="nav-brand">
+            <div class="nav-brand-icon">📊</div>
+            <span>Research Hub</span>
+        </div>
+        
+        <div class="nav-tabs">
+            <div class="nav-tab active" data-tab="dashboard">Dashboard</div>
+            <div class="nav-tab" data-tab="portfolio">Portfolio</div>
+            <div class="nav-tab" data-tab="calendar">Calendar</div>
+        </div>
+        
+        <div class="nav-actions">
+            <div class="search-global">
+                <span class="search-icon">🔍</span>
+                <input type="text" placeholder="Search stocks... (Press /)" id="search-input">
+            </div>
+            <div class="avatar">DM</div>
+        </div>
+    </nav>
+
+    <div class="main-container">
         <!-- Sidebar -->
         <aside class="sidebar">
-            <div class="logo">📊 Research Tracker</div>
-            
-            <nav class="nav-section">
-                <div class="nav-label">Views</div>
-                <div class="nav-item active" data-view="all">
-                    <span>📋</span> All Stocks
-                    <span class="count" id="nav-count-all">0</span>
+            <div class="sidebar-section">
+                <div class="sidebar-title">Views</div>
+                <div class="sidebar-item active" data-filter="all">
+                    <span class="sidebar-item-icon">📋</span>
+                    All Stocks
+                    <span class="sidebar-item-count" id="count-all">0</span>
                 </div>
-                <div class="nav-item" data-view="active">
-                    <span>🔥</span> Active Research
-                    <span class="count" id="nav-count-active">0</span>
+                <div class="sidebar-item" data-filter="active">
+                    <span class="sidebar-item-icon">🔥</span>
+                    Active Research
+                    <span class="sidebar-item-count" id="count-active">0</span>
                 </div>
-                <div class="nav-item" data-view="monitoring">
-                    <span>👀</span> Monitoring
-                    <span class="count" id="nav-count-monitoring">0</span>
+                <div class="sidebar-item" data-filter="high-conviction">
+                    <span class="sidebar-item-icon">⭐</span>
+                    High Conviction
+                    <span class="sidebar-item-count" id="count-high">0</span>
                 </div>
-            </nav>
+            </div>
 
-            <nav class="nav-section">
-                <div class="nav-label">Sectors</div>
-                <div class="nav-item" data-sector="semis">
-                    <span>🔌</span> Semiconductors
-                    <span class="count" id="nav-count-semis">0</span>
+            <div class="sidebar-section">
+                <div class="sidebar-title">Sectors</div>
+                <div class="sidebar-item" data-sector="semis">
+                    <span class="sidebar-item-icon">🔌</span>
+                    Semiconductors
+                    <span class="sidebar-item-count" id="count-semis">0</span>
                 </div>
-                <div class="nav-item" data-sector="software">
-                    <span>💻</span> Software
-                    <span class="count" id="nav-count-software">0</span>
+                <div class="sidebar-item" data-sector="software">
+                    <span class="sidebar-item-icon">💻</span>
+                    Software
+                    <span class="sidebar-item-count" id="count-software">0</span>
                 </div>
-                <div class="nav-item" data-sector="internet">
-                    <span>🌐</span> Internet
-                    <span class="count" id="nav-count-internet">0</span>
+                <div class="sidebar-item" data-sector="internet">
+                    <span class="sidebar-item-icon">🌐</span>
+                    Internet
+                    <span class="sidebar-item-count" id="count-internet">0</span>
                 </div>
-            </nav>
+            </div>
 
-            <nav class="nav-section">
-                <div class="nav-label">Priority</div>
-                <div class="nav-item" data-priority="high">
-                    <span>🔴</span> High Priority
-                    <span class="count" id="nav-count-high">0</span>
+            <div class="sidebar-section">
+                <div class="sidebar-title">Quick Actions</div>
+                <div class="sidebar-item" onclick="exportToCSV()">
+                    <span class="sidebar-item-icon">📥</span>
+                    Export CSV
                 </div>
-                <div class="nav-item" data-priority="medium">
-                    <span>🟡</span> Medium Priority
-                    <span class="count" id="nav-count-medium">0</span>
+                <div class="sidebar-item" onclick="loadData()">
+                    <span class="sidebar-item-icon">🔄</span>
+                    Refresh Data
                 </div>
-                <div class="nav-item" data-priority="low">
-                    <span>⚪</span> Low Priority
-                    <span class="count" id="nav-count-low">0</span>
-                </div>
-            </nav>
+            </div>
         </aside>
 
         <!-- Main Content -->
-        <main class="main-content">
-            <div class="page-header">
-                <h1 class="page-title">Stock Research</h1>
-                <div class="header-actions">
-                    <div class="search-box">
-                        <span>🔍</span>
-                        <input type="text" placeholder="Search stocks..." id="search-input">
+        <main class="content">
+            <!-- Dashboard Tab -->
+            <div class="tab-content active" id="tab-dashboard">
+                <div class="dashboard-header">
+                    <h1 class="dashboard-title">Research Dashboard</h1>
+                    <p class="dashboard-subtitle">Track your active research and upcoming catalysts</p>
+                </div>
+
+                <div class="randy-banner">
+                    <div class="randy-avatar">🤖</div>
+                    <div class="randy-text">
+                        <p><strong>Randy</strong> manages this tracker. Tell me to add stocks, log calls, update thesis, or mark research complete.</p>
                     </div>
-                    <div class="view-toggle">
-                        <button class="active" data-view-type="cards">Cards</button>
-                        <button data-view-type="table">Table</button>
+                </div>
+
+                <div class="portfolio-summary">
+                    <div class="summary-card">
+                        <div class="summary-card-header">
+                            <span class="summary-card-title">Active Positions</span>
+                            <div class="summary-card-icon blue">📊</div>
+                        </div>
+                        <div class="summary-card-value" id="stat-total">-</div>
+                        <div class="summary-card-change positive">Stocks in research</div>
                     </div>
-                    <button class="btn btn-secondary" onclick="loadData()">↻ Refresh</button>
+                    <div class="summary-card">
+                        <div class="summary-card-header">
+                            <span class="summary-card-title">Avg. Upside</span>
+                            <div class="summary-card-icon green">📈</div>
+                        </div>
+                        <div class="summary-card-value" id="stat-upside">-</div>
+                        <div class="summary-card-change positive" id="stat-upside-label">To price targets</div>
+                    </div>
+                    <div class="summary-card">
+                        <div class="summary-card-header">
+                            <span class="summary-card-title">Calls This Week</span>
+                            <div class="summary-card-icon yellow">📞</div>
+                        </div>
+                        <div class="summary-card-value" id="stat-calls">-</div>
+                        <div class="summary-card-change" id="stat-calls-label">Completed / Scheduled</div>
+                    </div>
+                    <div class="summary-card">
+                        <div class="summary-card-header">
+                            <span class="summary-card-title">High Conviction</span>
+                            <div class="summary-card-icon purple">⭐</div>
+                        </div>
+                        <div class="summary-card-value" id="stat-conviction">-</div>
+                        <div class="summary-card-change">Top picks</div>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <div class="section-header">
+                        <h2 class="section-title">Portfolio Overview</h2>
+                        <div class="section-actions">
+                            <button class="btn btn-secondary" onclick="exportToCSV()">📥 Export</button>
+                        </div>
+                    </div>
+                    <div id="portfolio-table-container">
+                        <div class="loading-container">
+                            <div class="loading-spinner"></div>
+                            <span>Loading portfolio...</span>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <div class="randy-helper">
-                <span class="randy-helper-icon">🤖</span>
-                <div class="randy-helper-text">
-                    <strong>Randy manages this tracker.</strong> Tell me to add stocks, log calls, update thesis, or mark models complete.
+            <!-- Portfolio Tab -->
+            <div class="tab-content" id="tab-portfolio">
+                <div class="dashboard-header">
+                    <h1 class="dashboard-title">Portfolio Detail</h1>
+                    <p class="dashboard-subtitle">Detailed view of all research positions</p>
                 </div>
+                <div id="portfolio-detail-container"></div>
             </div>
 
-            <div class="stats-bar">
-                <div class="stat-card">
-                    <div class="stat-label">Active Stocks</div>
-                    <div class="stat-value" id="stat-stocks">-</div>
+            <!-- Calendar Tab -->
+            <div class="tab-content" id="tab-calendar">
+                <div class="dashboard-header">
+                    <h1 class="dashboard-title">Research Calendar</h1>
+                    <p class="dashboard-subtitle">Earnings dates and key events</p>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-label">Calls Completed</div>
-                    <div class="stat-value" id="stat-completed">-</div>
+                <div class="calendar-section">
+                    <div class="calendar-main">
+                        <div class="calendar-header">
+                            <h3 class="calendar-title" id="calendar-month-title">February 2026</h3>
+                            <div class="calendar-nav">
+                                <button class="calendar-nav-btn" onclick="changeMonth(-1)">←</button>
+                                <button class="calendar-nav-btn" onclick="changeMonth(1)">→</button>
+                            </div>
+                        </div>
+                        <div class="calendar-grid" id="calendar-grid">
+                            <!-- Calendar will be rendered here -->
+                        </div>
+                    </div>
+                    <div class="upcoming-events">
+                        <h3 class="upcoming-header">Upcoming Events</h3>
+                        <div class="event-list" id="event-list">
+                            <!-- Events will be rendered here -->
+                        </div>
+                    </div>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-label">Calls Scheduled</div>
-                    <div class="stat-value" id="stat-scheduled">-</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-label">Models Complete</div>
-                    <div class="stat-value" id="stat-models">-</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-label">High Conviction</div>
-                    <div class="stat-value" id="stat-conviction">-</div>
-                </div>
-            </div>
-
-            <div class="filter-bar" id="filter-bar">
-                <div class="filter-group">
-                    <span class="filter-label">Sort:</span>
-                    <select class="filter-select" id="sort-select">
-                        <option value="ticker">Ticker</option>
-                        <option value="priority">Priority</option>
-                        <option value="calls">Most Calls</option>
-                        <option value="updated">Recently Updated</option>
-                    </select>
-                </div>
-            </div>
-
-            <div id="content">
-                <div class="loading">
-                    <div class="loading-spinner"></div>
-                    <div>Loading research...</div>
-                </div>
-            </div>
-
-            <div class="activity-panel" id="activity-panel" style="display: none;">
-                <div class="activity-header">
-                    <h3 class="activity-title">Recent Activity</h3>
-                </div>
-                <ul class="activity-list" id="activity-list">
-                </ul>
             </div>
         </main>
     </div>
 
     <!-- Stock Detail Modal -->
-    <div class="modal-overlay" id="detail-modal">
-        <div class="modal">
+    <div class="modal-overlay" id="stock-modal">
+        <div class="stock-detail-modal">
             <div class="modal-header">
-                <h2 class="modal-title" id="modal-stock-title">Stock Details</h2>
-                <button class="modal-close" onclick="closeModal()">&times;</button>
+                <div class="modal-stock-header">
+                    <div class="modal-stock-logo" id="modal-logo">-</div>
+                    <div class="modal-stock-info">
+                        <h2 id="modal-title">Stock Name</h2>
+                        <p id="modal-subtitle">Company Name</p>
+                    </div>
+                </div>
+                <button class="modal-close" onclick="closeModal()">×</button>
             </div>
-            <div class="modal-body" id="modal-stock-body">
+            <div class="modal-body" id="modal-body">
+                <!-- Modal content will be rendered here -->
             </div>
         </div>
     </div>
 
     <script>
+        // Configuration
         const REPO = 'amorton45/stock-tracker';
         const API_BASE = `https://api.github.com/repos/${REPO}`;
 
+        // State
         let allStocks = [];
-        let currentFilter = { view: 'all', sector: null, priority: null };
-        let currentViewType = 'cards';
+        let currentFilter = 'all';
+        let currentMonth = new Date();
+        let earningsData = [];
 
         // Initialize
         document.addEventListener('DOMContentLoaded', () => {
             loadData();
             setupEventListeners();
+            renderCalendar();
         });
 
         function setupEventListeners() {
+            // Tab switching
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.addEventListener('click', () => {
+                    document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+                    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                    tab.classList.add('active');
+                    document.getElementById(`tab-${tab.dataset.tab}`).classList.add('active');
+                });
+            });
+
+            // Sidebar filters
+            document.querySelectorAll('.sidebar-item[data-filter]').forEach(item => {
+                item.addEventListener('click', () => {
+                    document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
+                    item.classList.add('active');
+                    currentFilter = item.dataset.filter;
+                    renderPortfolio(filterStocks());
+                });
+            });
+
+            document.querySelectorAll('.sidebar-item[data-sector]').forEach(item => {
+                item.addEventListener('click', () => {
+                    document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
+                    item.classList.add('active');
+                    currentFilter = `sector:${item.dataset.sector}`;
+                    renderPortfolio(filterStocks());
+                });
+            });
+
             // Search
             document.getElementById('search-input').addEventListener('input', (e) => {
-                renderStocks(filterStocks(allStocks, e.target.value));
+                renderPortfolio(filterStocks(e.target.value));
             });
 
-            // Sort
-            document.getElementById('sort-select').addEventListener('change', () => {
-                renderStocks(filterStocks(allStocks));
+            // Keyboard shortcuts
+            document.addEventListener('keydown', (e) => {
+                if (e.target.tagName === 'INPUT') return;
+                if (e.key === '/') { e.preventDefault(); document.getElementById('search-input').focus(); }
+                if (e.key === 'Escape') closeModal();
+                if (e.key === 'r') loadData();
             });
 
-            // View toggle
-            document.querySelectorAll('.view-toggle button').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    document.querySelectorAll('.view-toggle button').forEach(b => b.classList.remove('active'));
-                    btn.classList.add('active');
-                    currentViewType = btn.dataset.viewType;
-                    renderStocks(filterStocks(allStocks));
-                });
-            });
-
-            // Sidebar navigation
-            document.querySelectorAll('.nav-item').forEach(item => {
-                item.addEventListener('click', () => {
-                    document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
-                    item.classList.add('active');
-                    
-                    if (item.dataset.view) currentFilter = { view: item.dataset.view, sector: null, priority: null };
-                    if (item.dataset.sector) currentFilter = { view: null, sector: item.dataset.sector, priority: null };
-                    if (item.dataset.priority) currentFilter = { view: null, sector: null, priority: item.dataset.priority };
-                    
-                    renderStocks(filterStocks(allStocks));
-                });
-            });
-
-            // Close modal on overlay click
-            document.getElementById('detail-modal').addEventListener('click', (e) => {
-                if (e.target.id === 'detail-modal') closeModal();
+            // Modal close on overlay click
+            document.getElementById('stock-modal').addEventListener('click', (e) => {
+                if (e.target.id === 'stock-modal') closeModal();
             });
         }
 
         async function loadData() {
-            const content = document.getElementById('content');
-            content.innerHTML = `<div class="loading"><div class="loading-spinner"></div><div>Loading research...</div></div>`;
-
             try {
                 const issuesRes = await fetch(`${API_BASE}/issues?labels=stock&state=open&per_page=100`);
-                if (!issuesRes.ok) throw new Error('Failed to fetch issues');
                 const issues = await issuesRes.json();
-
-                if (issues.length === 0) {
-                    content.innerHTML = `<div class="empty-state"><h3>No stocks yet</h3><p>Tell Randy to add a stock to start tracking.</p></div>`;
-                    updateStats([]);
-                    return;
-                }
 
                 allStocks = await Promise.all(issues.map(async (issue) => {
                     const commentsRes = await fetch(issue.comments_url);
@@ -1216,17 +1322,19 @@
                     return parseStock(issue, comments);
                 }));
 
-                // Fetch stock prices
-                await fetchStockPrices(allStocks);
-
-                updateStats(allStocks);
-                updateNavCounts(allStocks);
-                renderStocks(filterStocks(allStocks));
-                renderActivity(allStocks);
+                await fetchStockPrices();
+                await fetchEarningsData();
+                
+                updateStats();
+                updateSidebarCounts();
+                renderPortfolio(filterStocks());
+                renderCalendar();
+                renderUpcomingEvents();
 
             } catch (error) {
-                console.error(error);
-                content.innerHTML = `<div class="empty-state"><h3>Error loading data</h3><p>${error.message}</p><button class="btn btn-primary" onclick="loadData()">Retry</button></div>`;
+                console.error('Failed to load data:', error);
+                document.getElementById('portfolio-table-container').innerHTML = 
+                    `<div class="empty-state"><h3>Error loading data</h3><p>${error.message}</p></div>`;
             }
         }
 
@@ -1234,8 +1342,7 @@
             const body = issue.body || '';
             const labels = issue.labels.map(l => l.name);
             
-            // Parse metadata from body
-            const parsed = {
+            const stock = {
                 ticker: issue.title.split(' ')[0].toUpperCase(),
                 name: '',
                 thesis: '',
@@ -1256,427 +1363,465 @@
                 issueUrl: issue.html_url,
                 updatedAt: issue.updated_at,
                 price: null,
-                priceChange: null
+                priceChange: null,
+                earningsDate: null
             };
 
             // Parse labels
             labels.forEach(label => {
-                if (label.startsWith('sector:')) parsed.sector = label.replace('sector:', '');
-                if (label.startsWith('priority:')) parsed.priority = label.replace('priority:', '');
-                if (label.startsWith('status:')) parsed.status = label.replace('status:', '');
+                if (label.startsWith('sector:')) stock.sector = label.replace('sector:', '');
+                if (label.startsWith('priority:')) stock.priority = label.replace('priority:', '');
+                if (label.startsWith('status:')) stock.status = label.replace('status:', '');
             });
 
             // Parse body
-            const lines = body.split('\n');
             let currentSection = null;
-
-            lines.forEach(line => {
+            body.split('\n').forEach(line => {
                 const trimmed = line.trim();
                 
-                if (trimmed.startsWith('Company:')) parsed.name = trimmed.replace('Company:', '').trim();
-                if (trimmed.startsWith('Analyst:')) parsed.analyst = trimmed.replace('Analyst:', '').trim();
-                if (trimmed.startsWith('Price Target:')) parsed.priceTarget = trimmed.replace('Price Target:', '').trim();
-                if (trimmed.startsWith('Conviction:')) parsed.conviction = trimmed.replace('Conviction:', '').trim().toLowerCase();
-                if (trimmed.includes('[x] Model Completed') || trimmed.includes('Model: ✅') || trimmed.includes('Model: Complete')) {
-                    parsed.modelCompleted = true;
+                if (trimmed.startsWith('Company:')) stock.name = trimmed.replace('Company:', '').trim();
+                if (trimmed.startsWith('Analyst:')) stock.analyst = trimmed.replace('Analyst:', '').trim();
+                if (trimmed.startsWith('Price Target:')) {
+                    const pt = trimmed.replace('Price Target:', '').trim().replace('$', '');
+                    stock.priceTarget = parseFloat(pt) || null;
                 }
+                if (trimmed.startsWith('Conviction:')) stock.conviction = trimmed.replace('Conviction:', '').trim().toLowerCase();
+                if (trimmed.includes('[x] Model Completed')) stock.modelCompleted = true;
                 
-                if (trimmed.startsWith('## Thesis') || trimmed.startsWith('### Thesis')) {
-                    currentSection = 'thesis';
-                } else if (trimmed.startsWith('## Bull') || trimmed.startsWith('### Bull')) {
-                    currentSection = 'bull';
-                } else if (trimmed.startsWith('## Bear') || trimmed.startsWith('### Bear')) {
-                    currentSection = 'bear';
-                } else if (trimmed.startsWith('##') || trimmed.startsWith('###')) {
-                    currentSection = null;
-                } else if (currentSection === 'thesis' && trimmed) {
-                    parsed.thesis += (parsed.thesis ? ' ' : '') + trimmed;
-                } else if (currentSection === 'bull' && trimmed.startsWith('-')) {
-                    parsed.bullCase.push(trimmed.substring(1).trim());
-                } else if (trimmed.startsWith('## Key Questions') || trimmed.startsWith('### Key Questions')) {
-                    currentSection = 'questions';
-                } else if (trimmed.startsWith('## Notes') || trimmed.startsWith('### Notes')) {
-                    currentSection = 'notes';
-                } else if (currentSection === 'bear' && trimmed.startsWith('-')) {
-                    parsed.bearCase.push(trimmed.substring(1).trim());
-                } else if (currentSection === 'questions' && trimmed.startsWith('-')) {
-                    parsed.keyQuestions.push(trimmed.substring(1).trim());
-                } else if (currentSection === 'notes' && trimmed) {
-                    parsed.notes += (parsed.notes ? ' ' : '') + trimmed;
-                    parsed.bearCase.push(trimmed.substring(1).trim());
-                }
+                if (trimmed.startsWith('## Thesis') || trimmed.startsWith('### Thesis')) currentSection = 'thesis';
+                else if (trimmed.startsWith('## Bull') || trimmed.startsWith('### Bull')) currentSection = 'bull';
+                else if (trimmed.startsWith('## Bear') || trimmed.startsWith('### Bear')) currentSection = 'bear';
+                else if (trimmed.startsWith('## Key') || trimmed.startsWith('### Key')) currentSection = 'questions';
+                else if (trimmed.startsWith('## Notes') || trimmed.startsWith('### Notes')) currentSection = 'notes';
+                else if (trimmed.startsWith('##')) currentSection = null;
+                else if (currentSection === 'thesis' && trimmed) stock.thesis += (stock.thesis ? ' ' : '') + trimmed;
+                else if (currentSection === 'bull' && trimmed.startsWith('-')) stock.bullCase.push(trimmed.substring(1).trim());
+                else if (currentSection === 'bear' && trimmed.startsWith('-')) stock.bearCase.push(trimmed.substring(1).trim());
+                else if (currentSection === 'questions' && trimmed.startsWith('-')) stock.keyQuestions.push(trimmed.substring(1).trim());
+                else if (currentSection === 'notes' && trimmed) stock.notes += (stock.notes ? ' ' : '') + trimmed;
             });
 
             // Parse comments for calls
             comments.forEach(comment => {
-                const text = comment.body || '';
-                const clines = text.split('\n');
-                
-                clines.forEach(line => {
+                comment.body?.split('\n').forEach(line => {
                     const completedMatch = line.match(/^COMPLETED:\s*(.+?)\s*\|\s*(.+?)(?:\s*\|\s*(.+))?$/i);
                     const scheduledMatch = line.match(/^SCHEDULED:\s*(.+?)\s*\|\s*(.+?)(?:\s*\|\s*(.+))?$/i);
                     
                     if (completedMatch) {
-                        parsed.completedCalls.push({
-                            contact: completedMatch[1].trim(),
-                            date: completedMatch[2].trim(),
-                            notes: completedMatch[3]?.trim() || ''
-                        });
+                        stock.completedCalls.push({ contact: completedMatch[1].trim(), date: completedMatch[2].trim(), notes: completedMatch[3]?.trim() || '' });
                     }
                     if (scheduledMatch) {
-                        parsed.scheduledCalls.push({
-                            contact: scheduledMatch[1].trim(),
-                            date: scheduledMatch[2].trim(),
-                            notes: scheduledMatch[3]?.trim() || ''
-                        });
+                        stock.scheduledCalls.push({ contact: scheduledMatch[1].trim(), date: scheduledMatch[2].trim(), notes: scheduledMatch[3]?.trim() || '' });
                     }
                 });
             });
 
-            return parsed;
+            return stock;
         }
 
-        async function fetchStockPrices(stocks) {
-            // Using Yahoo Finance unofficial API (limited, but free)
-            // In production, you'd use a proper API
-            for (const stock of stocks) {
+        async function fetchStockPrices() {
+            for (const stock of allStocks) {
                 try {
-                    // Simple price fetch - in production use proper financial API
                     const res = await fetch(`https://query1.finance.yahoo.com/v8/finance/chart/${stock.ticker}?interval=1d&range=1d`);
                     if (res.ok) {
                         const data = await res.json();
                         const quote = data.chart?.result?.[0]?.meta;
                         if (quote) {
-                            stock.price = quote.regularMarketPrice?.toFixed(2);
-                            const prevClose = quote.previousClose;
-                            if (prevClose) {
-                                const change = ((quote.regularMarketPrice - prevClose) / prevClose * 100).toFixed(2);
-                                stock.priceChange = parseFloat(change);
+                            stock.price = quote.regularMarketPrice;
+                            if (quote.previousClose) {
+                                stock.priceChange = ((quote.regularMarketPrice - quote.previousClose) / quote.previousClose * 100);
                             }
                         }
                     }
-                } catch (e) {
-                    // Price fetch failed, continue without price
-                }
+                } catch (e) { /* Price fetch failed, continue */ }
             }
         }
 
-        function filterStocks(stocks, searchTerm = '') {
-            let filtered = [...stocks];
+        async function fetchEarningsData() {
+            // Fetch earnings dates from Yahoo Finance for each stock
+            earningsData = [];
+            for (const stock of allStocks) {
+                try {
+                    const res = await fetch(`https://query1.finance.yahoo.com/v10/finance/quoteSummary/${stock.ticker}?modules=calendarEvents`);
+                    if (res.ok) {
+                        const data = await res.json();
+                        const earnings = data.quoteSummary?.result?.[0]?.calendarEvents?.earnings;
+                        if (earnings?.earningsDate?.[0]?.raw) {
+                            const date = new Date(earnings.earningsDate[0].raw * 1000);
+                            stock.earningsDate = date;
+                            earningsData.push({ ticker: stock.ticker, date, type: 'earnings' });
+                        }
+                    }
+                } catch (e) { /* Earnings fetch failed */ }
+            }
+        }
+
+        function filterStocks(searchTerm = '') {
+            let filtered = [...allStocks];
             
-            // Apply search
             if (searchTerm) {
                 const term = searchTerm.toLowerCase();
                 filtered = filtered.filter(s => 
                     s.ticker.toLowerCase().includes(term) || 
-                    s.name.toLowerCase().includes(term) ||
-                    s.thesis.toLowerCase().includes(term)
+                    s.name.toLowerCase().includes(term)
                 );
             }
 
-            // Apply filters
-            if (currentFilter.view === 'active') {
-                filtered = filtered.filter(s => s.status === 'active');
-            } else if (currentFilter.view === 'monitoring') {
-                filtered = filtered.filter(s => s.status === 'monitoring');
+            if (currentFilter === 'active') filtered = filtered.filter(s => s.status === 'active');
+            else if (currentFilter === 'high-conviction') filtered = filtered.filter(s => s.conviction === 'high');
+            else if (currentFilter.startsWith('sector:')) {
+                const sector = currentFilter.replace('sector:', '');
+                filtered = filtered.filter(s => s.sector === sector);
             }
-
-            if (currentFilter.sector) {
-                filtered = filtered.filter(s => s.sector === currentFilter.sector);
-            }
-
-            if (currentFilter.priority) {
-                filtered = filtered.filter(s => s.priority === currentFilter.priority);
-            }
-
-            // Apply sort
-            const sortBy = document.getElementById('sort-select').value;
-            filtered.sort((a, b) => {
-                switch (sortBy) {
-                    case 'priority':
-                        const priorityOrder = { high: 0, medium: 1, low: 2 };
-                        return priorityOrder[a.priority] - priorityOrder[b.priority];
-                    case 'calls':
-                        return (b.completedCalls.length + b.scheduledCalls.length) - 
-                               (a.completedCalls.length + a.scheduledCalls.length);
-                    case 'updated':
-                        return new Date(b.updatedAt) - new Date(a.updatedAt);
-                    default:
-                        return a.ticker.localeCompare(b.ticker);
-                }
-            });
 
             return filtered;
         }
 
-        function renderStocks(stocks) {
-            const content = document.getElementById('content');
+        function updateStats() {
+            document.getElementById('stat-total').textContent = allStocks.length;
             
+            // Calculate average upside
+            const stocksWithTarget = allStocks.filter(s => s.priceTarget && s.price);
+            if (stocksWithTarget.length > 0) {
+                const avgUpside = stocksWithTarget.reduce((sum, s) => sum + ((s.priceTarget - s.price) / s.price * 100), 0) / stocksWithTarget.length;
+                document.getElementById('stat-upside').textContent = `${avgUpside.toFixed(1)}%`;
+            } else {
+                document.getElementById('stat-upside').textContent = '-';
+            }
+
+            const totalCalls = allStocks.reduce((sum, s) => sum + s.completedCalls.length, 0);
+            const scheduledCalls = allStocks.reduce((sum, s) => sum + s.scheduledCalls.length, 0);
+            document.getElementById('stat-calls').textContent = `${totalCalls}`;
+            document.getElementById('stat-calls-label').textContent = `${scheduledCalls} scheduled`;
+
+            document.getElementById('stat-conviction').textContent = allStocks.filter(s => s.conviction === 'high').length;
+        }
+
+        function updateSidebarCounts() {
+            document.getElementById('count-all').textContent = allStocks.length;
+            document.getElementById('count-active').textContent = allStocks.filter(s => s.status === 'active').length;
+            document.getElementById('count-high').textContent = allStocks.filter(s => s.conviction === 'high').length;
+            document.getElementById('count-semis').textContent = allStocks.filter(s => s.sector === 'semis').length;
+            document.getElementById('count-software').textContent = allStocks.filter(s => s.sector === 'software').length;
+            document.getElementById('count-internet').textContent = allStocks.filter(s => s.sector === 'internet').length;
+        }
+
+        function renderPortfolio(stocks) {
             if (stocks.length === 0) {
-                content.innerHTML = `<div class="empty-state"><h3>No stocks match your filters</h3></div>`;
+                document.getElementById('portfolio-table-container').innerHTML = 
+                    `<div class="empty-state"><h3>No stocks found</h3><p>Tell Randy to add some stocks to track.</p></div>`;
                 return;
             }
 
-            if (currentViewType === 'table') {
-                content.innerHTML = renderTableView(stocks);
-            } else {
-                content.innerHTML = `<div class="stocks-grid">${stocks.map(s => renderStockCard(s)).join('')}</div>`;
-            }
+            const html = `
+                <table class="portfolio-table">
+                    <thead>
+                        <tr>
+                            <th>Stock</th>
+                            <th>Price</th>
+                            <th>Change</th>
+                            <th>Target / Upside</th>
+                            <th>Conviction</th>
+                            <th>Status</th>
+                            <th>Progress</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${stocks.map(s => renderPortfolioRow(s)).join('')}
+                    </tbody>
+                </table>
+            `;
+            document.getElementById('portfolio-table-container').innerHTML = html;
         }
 
-        function renderStockCard(stock) {
-            const totalCalls = stock.completedCalls.length + stock.scheduledCalls.length;
-            const checklistItems = 5; // Thesis, Bull case, Bear case, Calls, Model
-            const completedItems = [
-                stock.thesis ? 1 : 0,
-                stock.bullCase.length > 0 ? 1 : 0,
-                stock.bearCase.length > 0 ? 1 : 0,
-                stock.completedCalls.length > 0 ? 1 : 0,
-                stock.modelCompleted ? 1 : 0
-            ].reduce((a, b) => a + b, 0);
-            const progress = Math.round((completedItems / checklistItems) * 100);
-
+        function renderPortfolioRow(stock) {
+            const upside = stock.price && stock.priceTarget ? ((stock.priceTarget - stock.price) / stock.price * 100) : null;
+            const upsideClass = upside > 20 ? 'high' : upside > 0 ? 'medium' : 'low';
+            
+            const progress = calculateProgress(stock);
+            
             return `
-                <div class="stock-card" onclick="openStockDetail(${stock.issueNumber})">
-                    <div class="stock-card-header">
-                        <div class="stock-info">
-                            <div>
-                                <div class="stock-ticker-large">${stock.ticker}</div>
-                                <div class="stock-name">${stock.name || 'Unknown'}</div>
+                <tr onclick="openStockDetail('${stock.ticker}')">
+                    <td>
+                        <div class="stock-cell">
+                            <div class="stock-logo">${stock.ticker.substring(0, 2)}</div>
+                            <div class="stock-info">
+                                <h4>${stock.ticker}</h4>
+                                <span>${stock.name || 'Unknown'}</span>
                             </div>
                         </div>
-                        <div class="stock-price">
-                            ${stock.price ? `
-                                <div class="stock-price-value">$${stock.price}</div>
-                                <div class="stock-price-change ${stock.priceChange >= 0 ? 'positive' : 'negative'}">
-                                    ${stock.priceChange >= 0 ? '▲' : '▼'} ${Math.abs(stock.priceChange)}%
+                    </td>
+                    <td class="price-cell">${stock.price ? '$' + stock.price.toFixed(2) : '-'}</td>
+                    <td>
+                        ${stock.priceChange !== null ? `
+                            <span class="change-cell ${stock.priceChange >= 0 ? 'positive' : 'negative'}">
+                                ${stock.priceChange >= 0 ? '↑' : '↓'} ${Math.abs(stock.priceChange).toFixed(2)}%
+                            </span>
+                        ` : '-'}
+                    </td>
+                    <td>
+                        <div class="target-cell">
+                            <span class="target-price">${stock.priceTarget ? '$' + stock.priceTarget : '-'}</span>
+                            ${upside !== null ? `<span class="upside-badge ${upsideClass}">${upside > 0 ? '+' : ''}${upside.toFixed(1)}%</span>` : ''}
+                        </div>
+                    </td>
+                    <td>
+                        <div class="conviction-cell">
+                            <span class="conviction-dot ${stock.conviction === 'high' || stock.conviction === 'medium' || stock.conviction === 'low' ? 'filled ' + stock.conviction : ''}"></span>
+                            <span class="conviction-dot ${stock.conviction === 'high' || stock.conviction === 'medium' ? 'filled ' + stock.conviction : ''}"></span>
+                            <span class="conviction-dot ${stock.conviction === 'high' ? 'filled high' : ''}"></span>
+                        </div>
+                    </td>
+                    <td>
+                        <span class="status-badge ${stock.status}">${stock.status}</span>
+                    </td>
+                    <td>
+                        <div class="progress-mini">
+                            <div class="progress-mini-fill" style="width: ${progress}%"></div>
+                        </div>
+                    </td>
+                </tr>
+            `;
+        }
+
+        function calculateProgress(stock) {
+            let steps = 0;
+            let completed = 0;
+            
+            steps += 1; if (stock.thesis) completed++;
+            steps += 1; if (stock.bullCase.length > 0) completed++;
+            steps += 1; if (stock.bearCase.length > 0) completed++;
+            steps += 1; if (stock.completedCalls.length > 0) completed++;
+            steps += 1; if (stock.modelCompleted) completed++;
+            
+            return Math.round((completed / steps) * 100);
+        }
+
+        function openStockDetail(ticker) {
+            const stock = allStocks.find(s => s.ticker === ticker);
+            if (!stock) return;
+
+            document.getElementById('modal-logo').textContent = stock.ticker.substring(0, 2);
+            document.getElementById('modal-title').textContent = stock.ticker;
+            document.getElementById('modal-subtitle').textContent = stock.name || 'Company';
+
+            const upside = stock.price && stock.priceTarget ? ((stock.priceTarget - stock.price) / stock.price * 100) : null;
+
+            document.getElementById('modal-body').innerHTML = `
+                <div class="modal-grid">
+                    <div class="modal-card">
+                        <div class="modal-card-title">Key Metrics</div>
+                        <div class="modal-metrics">
+                            <div class="modal-metric">
+                                <div class="modal-metric-value">${stock.price ? '$' + stock.price.toFixed(2) : '-'}</div>
+                                <div class="modal-metric-label">Current Price</div>
+                            </div>
+                            <div class="modal-metric">
+                                <div class="modal-metric-value">${stock.priceTarget ? '$' + stock.priceTarget : '-'}</div>
+                                <div class="modal-metric-label">Price Target</div>
+                            </div>
+                            <div class="modal-metric">
+                                <div class="modal-metric-value ${upside > 0 ? 'positive' : 'negative'}">${upside !== null ? (upside > 0 ? '+' : '') + upside.toFixed(1) + '%' : '-'}</div>
+                                <div class="modal-metric-label">Upside</div>
+                            </div>
+                            <div class="modal-metric">
+                                <div class="modal-metric-value">${stock.conviction}</div>
+                                <div class="modal-metric-label">Conviction</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-card">
+                        <div class="modal-card-title">Research Status</div>
+                        <div class="modal-metrics">
+                            <div class="modal-metric">
+                                <div class="modal-metric-value">${stock.completedCalls.length}</div>
+                                <div class="modal-metric-label">Calls Done</div>
+                            </div>
+                            <div class="modal-metric">
+                                <div class="modal-metric-value">${stock.scheduledCalls.length}</div>
+                                <div class="modal-metric-label">Scheduled</div>
+                            </div>
+                            <div class="modal-metric">
+                                <div class="modal-metric-value">${stock.modelCompleted ? '✅' : '⬜'}</div>
+                                <div class="modal-metric-label">Model</div>
+                            </div>
+                            <div class="modal-metric">
+                                <div class="modal-metric-value">${calculateProgress(stock)}%</div>
+                                <div class="modal-metric-label">Progress</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                ${stock.thesis ? `
+                    <div class="modal-card" style="margin-bottom: 1.5rem;">
+                        <div class="modal-card-title">Investment Thesis</div>
+                        <div class="thesis-content">${stock.thesis}</div>
+                    </div>
+                ` : ''}
+
+                <div class="modal-grid">
+                    <div class="modal-card">
+                        <div class="modal-card-title">🐂 Bull Case</div>
+                        ${stock.bullCase.length > 0 ? `
+                            <ul class="case-list bull">
+                                ${stock.bullCase.map(b => `<li>${b}</li>`).join('')}
+                            </ul>
+                        ` : '<p style="color: var(--text-muted); font-size: 0.875rem;">No bull points yet</p>'}
+                    </div>
+                    <div class="modal-card">
+                        <div class="modal-card-title">🐻 Bear Case</div>
+                        ${stock.bearCase.length > 0 ? `
+                            <ul class="case-list bear">
+                                ${stock.bearCase.map(b => `<li>${b}</li>`).join('')}
+                            </ul>
+                        ` : '<p style="color: var(--text-muted); font-size: 0.875rem;">No bear points yet</p>'}
+                    </div>
+                </div>
+
+                ${stock.keyQuestions.length > 0 ? `
+                    <div class="modal-card" style="margin-top: 1.5rem;">
+                        <div class="modal-card-title">Key Questions</div>
+                        <ul class="case-list" style="list-style: decimal; padding-left: 1.25rem;">
+                            ${stock.keyQuestions.map(q => `<li style="color: var(--text-secondary);">${q}</li>`).join('')}
+                        </ul>
+                    </div>
+                ` : ''}
+
+                <div class="modal-card" style="margin-top: 1.5rem;">
+                    <div class="modal-card-title">Call Log</div>
+                    ${stock.completedCalls.length > 0 || stock.scheduledCalls.length > 0 ? `
+                        ${stock.scheduledCalls.map(c => `
+                            <div class="call-log-item">
+                                <div class="call-log-info">
+                                    <div class="call-log-icon scheduled">📅</div>
+                                    <div>
+                                        <div class="call-log-name">${c.contact}</div>
+                                        ${c.notes ? `<div class="call-log-notes">${c.notes}</div>` : ''}
+                                    </div>
                                 </div>
-                            ` : '<div class="stock-price-value">--</div>'}
-                        </div>
-                    </div>
-                    <div class="stock-card-body">
-                        <div class="stock-meta">
-                            ${stock.sector ? `<span class="tag tag-sector">${stock.sector}</span>` : ''}
-                            <span class="tag tag-priority-${stock.priority}">${stock.priority}</span>
-                            ${stock.analyst ? `<span class="tag tag-analyst">${stock.analyst}</span>` : ''}
-                            ${stock.modelCompleted ? '<span class="tag" style="background: rgba(34,197,94,0.15); color: #22c55e;">✓ Model</span>' : ''}
-                        </div>
-                        
-                        ${stock.thesis ? `
-                            <div class="stock-thesis">
-                                <strong>Thesis:</strong> ${stock.thesis.substring(0, 150)}${stock.thesis.length > 150 ? '...' : ''}
+                                <div class="call-log-date">${c.date}</div>
                             </div>
-                        ` : ''}
-
-                        <div class="stock-metrics">
-                            <div class="metric">
-                                <div class="metric-value">${stock.completedCalls.length}</div>
-                                <div class="metric-label">Calls Done</div>
+                        `).join('')}
+                        ${stock.completedCalls.map(c => `
+                            <div class="call-log-item">
+                                <div class="call-log-info">
+                                    <div class="call-log-icon">✅</div>
+                                    <div>
+                                        <div class="call-log-name">${c.contact}</div>
+                                        ${c.notes ? `<div class="call-log-notes">${c.notes}</div>` : ''}
+                                    </div>
+                                </div>
+                                <div class="call-log-date">${c.date}</div>
                             </div>
-                            <div class="metric">
-                                <div class="metric-value">${stock.scheduledCalls.length}</div>
-                                <div class="metric-label">Scheduled</div>
-                            </div>
-                            <div class="metric">
-                                <div class="metric-value conviction-${stock.conviction}">${stock.conviction.charAt(0).toUpperCase()}</div>
-                                <div class="metric-label">Conviction</div>
-                            </div>
-                        </div>
-
-                        <div class="stock-progress">
-                            <div class="progress-header">
-                                <span class="progress-label">Research Progress</span>
-                                <span class="progress-value">${progress}%</span>
-                            </div>
-                            <div class="progress-bar">
-                                <div class="progress-fill ${progress === 100 ? 'complete' : ''}" style="width: ${progress}%"></div>
-                            </div>
-                        </div>
-                    </div>
+                        `).join('')}
+                    ` : '<p style="color: var(--text-muted); font-size: 0.875rem;">No calls logged yet</p>'}
                 </div>
             `;
+
+            document.getElementById('stock-modal').classList.add('active');
         }
 
-        function renderTableView(stocks) {
-            return `
-                <div class="table-container">
-                    <table class="data-table">
-                        <thead>
-                            <tr>
-                                <th>Ticker</th>
-                                <th>Price</th>
-                                <th>Sector</th>
-                                <th>Priority</th>
-                                <th>Conviction</th>
-                                <th>Calls</th>
-                                <th>Model</th>
-                                <th>Analyst</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${stocks.map(s => `
-                                <tr onclick="openStockDetail(${s.issueNumber})" style="cursor: pointer;">
-                                    <td>
-                                        <div class="table-ticker">${s.ticker}</div>
-                                        <div class="table-company">${s.name || '-'}</div>
-                                    </td>
-                                    <td>
-                                        ${s.price ? `
-                                            <div>$${s.price}</div>
-                                            <div class="stock-price-change ${s.priceChange >= 0 ? 'positive' : 'negative'}">
-                                                ${s.priceChange >= 0 ? '▲' : '▼'} ${Math.abs(s.priceChange)}%
-                                            </div>
-                                        ` : '--'}
-                                    </td>
-                                    <td><span class="tag tag-sector">${s.sector || '-'}</span></td>
-                                    <td><span class="tag tag-priority-${s.priority}">${s.priority}</span></td>
-                                    <td><span class="conviction-badge conviction-${s.conviction}">${s.conviction}</span></td>
-                                    <td>${s.completedCalls.length} / ${s.scheduledCalls.length}</td>
-                                    <td>${s.modelCompleted ? '✅' : '⬜'}</td>
-                                    <td>${s.analyst || '-'}</td>
-                                </tr>
-                            `).join('')}
-                        </tbody>
-                    </table>
-                </div>
-            `;
+        function closeModal() {
+            document.getElementById('stock-modal').classList.remove('active');
         }
 
-        function renderActivity(stocks) {
-            const activities = [];
+        // Calendar functions
+        function renderCalendar() {
+            const grid = document.getElementById('calendar-grid');
+            const year = currentMonth.getFullYear();
+            const month = currentMonth.getMonth();
             
-            stocks.forEach(stock => {
-                stock.completedCalls.forEach(call => {
-                    activities.push({
-                        type: 'call',
-                        icon: '📞',
-                        text: `Call completed with <strong>${call.contact}</strong> for <strong>${stock.ticker}</strong>`,
-                        date: call.date
-                    });
-                });
-                
-                stock.scheduledCalls.forEach(call => {
-                    activities.push({
-                        type: 'scheduled',
-                        icon: '📅',
-                        text: `Call scheduled with <strong>${call.contact}</strong> for <strong>${stock.ticker}</strong>`,
-                        date: call.date
-                    });
-                });
-            });
+            document.getElementById('calendar-month-title').textContent = 
+                currentMonth.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
 
-            // Sort by date (most recent first)
-            activities.sort((a, b) => new Date(b.date) - new Date(a.date));
+            const firstDay = new Date(year, month, 1);
+            const lastDay = new Date(year, month + 1, 0);
+            const startPadding = firstDay.getDay();
             
-            const panel = document.getElementById('activity-panel');
-            const list = document.getElementById('activity-list');
-            
-            if (activities.length > 0) {
-                panel.style.display = 'block';
-                list.innerHTML = activities.slice(0, 10).map(a => `
-                    <li class="activity-item">
-                        <div class="activity-icon ${a.type}">${a.icon}</div>
-                        <div class="activity-content">
-                            <div class="activity-text">${a.text}</div>
-                            <div class="activity-time">${a.date}</div>
-                        </div>
-                    </li>
-                `).join('');
+            let html = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+                .map(d => `<div class="calendar-day-header">${d}</div>`).join('');
+
+            // Previous month padding
+            const prevMonth = new Date(year, month, 0);
+            for (let i = startPadding - 1; i >= 0; i--) {
+                html += `<div class="calendar-day other-month">${prevMonth.getDate() - i}</div>`;
             }
+
+            // Current month days
+            const today = new Date();
+            for (let day = 1; day <= lastDay.getDate(); day++) {
+                const date = new Date(year, month, day);
+                const isToday = date.toDateString() === today.toDateString();
+                const hasEarnings = earningsData.some(e => e.date.toDateString() === date.toDateString());
+                
+                let classes = 'calendar-day';
+                if (isToday) classes += ' today';
+                if (hasEarnings) classes += ' has-earnings';
+                
+                html += `<div class="${classes}">${day}</div>`;
+            }
+
+            // Next month padding
+            const remaining = 42 - (startPadding + lastDay.getDate());
+            for (let i = 1; i <= remaining; i++) {
+                html += `<div class="calendar-day other-month">${i}</div>`;
+            }
+
+            grid.innerHTML = html;
         }
 
-        function updateStats(stocks) {
-            document.getElementById('stat-stocks').textContent = stocks.length;
-            document.getElementById('stat-completed').textContent = 
-                stocks.reduce((sum, s) => sum + s.completedCalls.length, 0);
-            document.getElementById('stat-scheduled').textContent = 
-                stocks.reduce((sum, s) => sum + s.scheduledCalls.length, 0);
-            document.getElementById('stat-models').textContent = 
-                stocks.filter(s => s.modelCompleted).length;
-            document.getElementById('stat-conviction').textContent = 
-                stocks.filter(s => s.conviction === 'high').length;
+        function changeMonth(delta) {
+            currentMonth.setMonth(currentMonth.getMonth() + delta);
+            renderCalendar();
         }
 
-        // Export to CSV
+        function renderUpcomingEvents() {
+            const list = document.getElementById('event-list');
+            const now = new Date();
+            
+            const upcoming = earningsData
+                .filter(e => e.date >= now)
+                .sort((a, b) => a.date - b.date)
+                .slice(0, 5);
+
+            if (upcoming.length === 0) {
+                list.innerHTML = '<div class="empty-state" style="padding: 1rem;"><p>No upcoming events</p></div>';
+                return;
+            }
+
+            list.innerHTML = upcoming.map(e => `
+                <div class="event-item">
+                    <div class="event-date">
+                        <div class="event-date-month">${e.date.toLocaleDateString('en-US', { month: 'short' })}</div>
+                        <div class="event-date-day">${e.date.getDate()}</div>
+                    </div>
+                    <div class="event-info">
+                        <div class="event-title">${e.ticker}</div>
+                        <div class="event-type earnings">Earnings Report</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Export
         function exportToCSV() {
-            const headers = ['Ticker', 'Company', 'Sector', 'Priority', 'Conviction', 'Price Target', 'Analyst', 'Model Complete', 'Completed Calls', 'Scheduled Calls', 'Thesis', 'Price', 'Change %'];
+            const headers = ['Ticker', 'Company', 'Price', 'Target', 'Upside %', 'Conviction', 'Sector', 'Calls', 'Model Complete'];
+            const rows = allStocks.map(s => {
+                const upside = s.price && s.priceTarget ? ((s.priceTarget - s.price) / s.price * 100).toFixed(1) : '';
+                return [s.ticker, s.name, s.price || '', s.priceTarget || '', upside, s.conviction, s.sector || '', s.completedCalls.length, s.modelCompleted ? 'Yes' : 'No'];
+            });
             
-            const rows = allStocks.map(s => [
-                s.ticker,
-                s.name || '',
-                s.sector || '',
-                s.priority,
-                s.conviction,
-                s.priceTarget || '',
-                s.analyst || '',
-                s.modelCompleted ? 'Yes' : 'No',
-                s.completedCalls.length,
-                s.scheduledCalls.length,
-                '"' + (s.thesis || '').replace(/"/g, '""') + '"',
-                s.price || '',
-                s.priceChange || ''
-            ]);
-
             const csv = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
-            
-            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const blob = new Blob([csv], { type: 'text/csv' });
             const link = document.createElement('a');
             link.href = URL.createObjectURL(blob);
-            link.download = 'stock-research-' + new Date().toISOString().split('T')[0] + '.csv';
+            link.download = `research-${new Date().toISOString().split('T')[0]}.csv`;
             link.click();
         }
 
-        // Keyboard shortcuts
-        document.addEventListener('keydown', (e) => {
-            // Ignore if typing in an input
-            if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
-            
-            switch(e.key) {
-                case '/':
-                    e.preventDefault();
-                    document.getElementById('search-input').focus();
-                    break;
-                case 'r':
-                    if (!e.metaKey && !e.ctrlKey) loadData();
-                    break;
-                case 'Escape':
-                    closeModal();
-                    document.getElementById('search-input').blur();
-                    break;
-                case '1':
-                    document.querySelector('[data-view="all"]').click();
-                    break;
-                case '2':
-                    document.querySelector('[data-view="active"]').click();
-                    break;
-                case 't':
-                    document.querySelector('[data-view-type="table"]').click();
-                    break;
-                case 'c':
-                    document.querySelector('[data-view-type="cards"]').click();
-                    break;
-                case 'e':
-                    if (!e.metaKey && !e.ctrlKey) exportToCSV();
-                    break;
-            }
-        });
-
-        // Add export button after page loads
-        setTimeout(() => {
-            const headerActions = document.querySelector('.header-actions');
-            if (headerActions) {
-                const exportBtn = document.createElement('button');
-                exportBtn.className = 'btn btn-secondary';
-                exportBtn.innerHTML = '📥 Export';
-                exportBtn.onclick = exportToCSV;
-                exportBtn.title = 'Export to CSV (E)';
-                headerActions.appendChild(exportBtn);
-            }
-        }, 100);
-
-        // Keyboard shortcut help
-        console.log('%c📊 Stock Research Tracker - Keyboard Shortcuts', 'font-size: 14px; font-weight: bold;');
-        console.log('/  - Focus search\nr  - Refresh data\nt  - Table view\nc  - Cards view\ne  - Export CSV\n1  - All stocks\n2  - Active only\nEsc - Close modal');
+        // Auto refresh
+        setInterval(loadData, 120000);
     </script>
 </body>
 </html>
