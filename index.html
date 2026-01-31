@@ -1215,6 +1215,8 @@
                 thesis: '',
                 bullCase: [],
                 bearCase: [],
+                keyQuestions: [],
+                notes: '',
                 modelCompleted: false,
                 conviction: 'medium',
                 priceTarget: null,
@@ -1265,7 +1267,16 @@
                     parsed.thesis += (parsed.thesis ? ' ' : '') + trimmed;
                 } else if (currentSection === 'bull' && trimmed.startsWith('-')) {
                     parsed.bullCase.push(trimmed.substring(1).trim());
+                } else if (trimmed.startsWith('## Key Questions') || trimmed.startsWith('### Key Questions')) {
+                    currentSection = 'questions';
+                } else if (trimmed.startsWith('## Notes') || trimmed.startsWith('### Notes')) {
+                    currentSection = 'notes';
                 } else if (currentSection === 'bear' && trimmed.startsWith('-')) {
+                    parsed.bearCase.push(trimmed.substring(1).trim());
+                } else if (currentSection === 'questions' && trimmed.startsWith('-')) {
+                    parsed.keyQuestions.push(trimmed.substring(1).trim());
+                } else if (currentSection === 'notes' && trimmed) {
+                    parsed.notes += (parsed.notes ? ' ' : '') + trimmed;
                     parsed.bearCase.push(trimmed.substring(1).trim());
                 }
             });
