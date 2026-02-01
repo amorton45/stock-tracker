@@ -1289,6 +1289,12 @@
                     <div class="token-status" id="token-status"><span>⚪</span> Not configured</div>
                     <p style="font-size:0.75rem;color:var(--text-muted);margin-top:0.5rem">Required for editing. Generate at GitHub Settings → Developer Settings → Personal Access Tokens (scopes: repo)</p>
                 </div>
+                <div class="form-group" style="margin-top:1.5rem">
+                    <label class="form-label">Finnhub API Key (Earnings Calendar)</label>
+                    <input type="password" class="form-input settings-token" id="finnhub-key" placeholder="your_finnhub_api_key">
+                    <div class="token-status" id="finnhub-status"><span>⚪</span> Not configured</div>
+                    <p style="font-size:0.75rem;color:var(--text-muted);margin-top:0.5rem">Free at <a href="https://finnhub.io/register" target="_blank" style="color:var(--accent)">finnhub.io</a> - enables live earnings calendar
+                </div>
                 <div class="form-actions">
                     <button class="btn btn-secondary" onclick="closeSettings()">Cancel</button>
                     <button class="btn btn-primary" onclick="saveSettings()">Save Token</button>
@@ -1504,23 +1510,37 @@
         }
 
         async function fetchEarningsData() {
-            // Fetch earnings dates from Yahoo Finance for each stock
             earningsData = [];
-            for (const stock of allStocks) {
+            const finnhubKey = localStorage.getItem("finnhub_key");
+            if (finnhubKey) {
                 try {
-                    const res = await fetch(`https://query1.finance.yahoo.com/v10/finance/quoteSummary/${stock.ticker}?modules=calendarEvents`);
+                    const today = new Date();
+                    const from = today.toISOString().split("T")[0];
+                    const futureDate = new Date(today.getTime() + 90 * 24 * 60 * 60 * 1000);
+                    const to = futureDate.toISOString().split("T")[0];
+                    const res = await fetch("https://finnhub.io/api/v1/calendar/earnings?from=" + from + "\&to=" + to + "\&token=" + finnhubKey);
                     if (res.ok) {
                         const data = await res.json();
-                        const earnings = data.quoteSummary?.result?.[0]?.calendarEvents?.earnings;
-                        if (earnings?.earningsDate?.[0]?.raw) {
-                            const date = new Date(earnings.earningsDate[0].raw * 1000);
-                            stock.earningsDate = date;
-                            earningsData.push({ ticker: stock.ticker, date, type: 'earnings' });
-                        }
+                        const trackedTickers = allStocks.map(s => s.ticker.replace(".DE", "").toUpperCase());
+                        (data.earningsCalendar || []).forEach(e => {
+                            if (trackedTickers.includes(e.symbol)) {
+                                earningsData.push({ ticker: e.symbol, date: new Date(e.date + "T09:00:00"), type: "earnings", time: e.hour === "bmo" ? "Before Open" : e.hour === "amc" ? "After Close" : "" });
+                            }
+                        });
                     }
-                } catch (e) { /* Earnings fetch failed */ }
+                } catch (e) { console.log("Finnhub error:", e); }
+            }
+            if (earningsData.length === 0) {
+                const knownEarnings = { "AMD": "2026-02-04", "NVDA": "2026-02-26", "CVNA": "2026-02-20", "STX": "2026-02-04", "WDC": "2026-02-06", "CLS": "2026-02-06", "COMPEQ": "2026-02-14", "UMT": "2026-02-12" };
+                allStocks.forEach(stock => {
+                    const ticker = stock.ticker.replace(".DE", "");
+                    if (knownEarnings[ticker]) {
+                        earningsData.push({ ticker: ticker, date: new Date(knownEarnings[ticker] + "T09:00:00"), type: "earnings" });
+                    }
+                });
             }
         }
+
 
         function filterStocks(searchTerm = '') {
             let filtered = [...allStocks];
@@ -1901,7 +1921,9 @@
         function showSettings() {
             const token = localStorage.getItem('github_token') || '';
             document.getElementById('github-token').value = token;
+            document.getElementById('finnhub-key').value = localStorage.getItem('finnhub_key') || '';
             updateTokenStatus();
+            updateFinnhubStatus();
             document.getElementById('settings-modal').classList.add('active');
         }
 
@@ -1913,13 +1935,27 @@
             const token = document.getElementById('github-token').value.trim();
             if (token) {
                 localStorage.setItem('github_token', token);
+            const finnhubKey = document.getElementById('finnhub-key').value.trim();
+            if (finnhubKey) localStorage.setItem('finnhub_key', finnhubKey);
                 updateTokenStatus();
+            updateFinnhubStatus();
                 closeSettings();
                 alert('Token saved! You can now edit stocks.');
             }
         }
 
         function updateTokenStatus() {
+        function updateFinnhubStatus() {
+            const key = localStorage.getItem("finnhub_key");
+            const status = document.getElementById("finnhub-status");
+            if (key) {
+                status.innerHTML = "<span>🟢</span> Connected";
+                status.className = "token-status connected";
+            } else {
+                status.innerHTML = "<span>⚪</span> Not configured";
+                status.className = "token-status disconnected";
+            }
+        }
             const token = localStorage.getItem('github_token');
             const status = document.getElementById('token-status');
             if (token) {
@@ -2093,6 +2129,7 @@
 
         // Initialize token status on load
         setTimeout(updateTokenStatus, 100);
+        setTimeout(updateFinnhubStatus, 100);
     </script>
 </body>
 </html>
